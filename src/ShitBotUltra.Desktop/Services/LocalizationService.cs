@@ -110,7 +110,7 @@ public sealed partial class LocalizationService : INotifyPropertyChanged
         ["Core host arguments"] = "Core 宿主启动参数",
         ["The bundled Core host is started automatically by default. The launch arguments are passed directly to the host without a shell. Default: serve --no-webui."] = "默认会自动启动附带的 Core 宿主。Desktop 将启动参数直接传给宿主，不经过命令行解释器。默认值：serve --no-webui。",
         ["Core configuration directory"] = "Core 配置目录",
-        ["The Core owns its database and runtime files. Desktop uses the documented default user configuration directory."] = "数据库和运行文件由 Core 管理。Desktop 使用约定的默认用户配置目录。",
+        ["The Core owns its database and runtime files. Desktop stores them beside its executable."] = "数据库和运行文件由 Core 管理。Desktop 将它们存放在 EXE 所在目录。",
         ["Open configuration directory"] = "打开配置目录",
         ["Admin token"] = "管理员令牌",
         ["Blank: read local token only for loopback"] = "留空时仅为本机连接读取本地令牌",

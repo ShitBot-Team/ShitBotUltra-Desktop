@@ -21,7 +21,7 @@ public partial class SettingsViewModel : ObservableObject
     private string endpoint = "http://127.0.0.1:17880/";
 
     [ObservableProperty]
-    private string cliExecutablePath = Path.Combine(AppContext.BaseDirectory, "sbu.exe");
+    private string cliExecutablePath = DesktopPaths.BundledCoreHostPath;
 
     [ObservableProperty]
     private string cliArguments = DesktopSettings.DefaultCliArguments;

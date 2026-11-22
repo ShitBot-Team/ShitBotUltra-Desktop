@@ -26,4 +26,36 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
   </ItemGroup>
+
+  <!--
+    pack-windows.ps1 supplies this directory immediately before publishing a
+    release. Keeping it empty for ordinary local builds avoids treating a
+    generated Core host as a source-tree input.
+  -->
+  <ItemGroup Condition="'$(BundledReleaseAssetsPath)' != ''">
+    <Content Include="$(BundledReleaseAssetsPath)\**\*">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!--
+    The normal unpackaged MRT Core pipeline produces the project PRI but
+    currently does not add it to dotnet publish output. The PRI contains the
+    compiled XAML lookup entries required by Application.LoadComponent at
+    startup. When EnableMsixTooling is enabled, Windows App SDK supplies its
+    own equivalent publish target, so do not add the same PRI twice.
+  -->
+  <Target Name="AddUnpackagedProjectPriToPublish"
+          AfterTargets="ComputeResolvedFilesToPublishList"
+          DependsOnTargets="_GenerateProjectPriFile"
+          Condition="'$(WindowsPackageType)' == 'None' and '$(EnableMsixTooling)' != 'true'">
+    <ItemGroup>
+      <ResolvedFileToPublish Include="$(ProjectPriFullPath)"
+                             Condition="'$(CopyBuildOutputToPublishDirectory)' == 'true' and Exists('$(ProjectPriFullPath)')">
+        <RelativePath>$(ProjectPriFileName)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
 </Project>

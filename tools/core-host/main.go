@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"path/filepath"
 
 	core "github.com/ShitBot-Team/ShitBotUltra/runtime"
 )
@@ -24,10 +25,11 @@ func main() {
 
 func run(args []string) error {
 	if len(args) == 0 || args[0] != "serve" {
-		return fmt.Errorf("usage: sbu.exe serve [--no-webui]")
+		return fmt.Errorf("usage: sbu.exe serve [--no-webui] [--config-dir <directory>]")
 	}
 	flags := flag.NewFlagSet("serve", flag.ContinueOnError)
 	noWebUI := flags.Bool("no-webui", false, "disable WebUI for this Core session")
+	configDir := flags.String("config-dir", defaultConfigDirectory(), "Core configuration directory")
 	if err := flags.Parse(args[1:]); err != nil {
 		return err
 	}
@@ -35,7 +37,7 @@ func run(args []string) error {
 		return fmt.Errorf("unexpected argument %q", flags.Arg(0))
 	}
 
-	options := core.Options{Version: version}
+	options := core.Options{ConfigDir: *configDir, Version: version}
 	if *noWebUI {
 		enabled := false
 		options.WebUI = &enabled
@@ -49,4 +51,15 @@ func run(args []string) error {
 	// Run releases the Core lock and closes its services when the context is
 	// cancelled. Desktop sends Ctrl+C when it owns and stops this process.
 	return instance.Run(ctx)
+}
+
+func defaultConfigDirectory() string {
+	if directory := os.Getenv("SHITBOTULTRA_CONFIG_DIR"); directory != "" {
+		return directory
+	}
+	executable, err := os.Executable()
+	if err != nil {
+		return ""
+	}
+	return filepath.Dir(executable)
 }

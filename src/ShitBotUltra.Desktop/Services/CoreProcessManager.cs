@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using shitbotteam.ultra.desktop.Models;
 
 namespace shitbotteam.ultra.desktop.Services;
 
@@ -89,6 +90,9 @@ public sealed class CoreProcessManager : IDisposable
                 UseShellExecute = false,
                 CreateNoWindow = false
             };
+            // sbu.exe is extracted beside the single-file runtime, not beside
+            // the EXE the user launched. Keep Core state at that launched EXE.
+            startInfo.Environment["SHITBOTULTRA_CONFIG_DIR"] = CorePaths.GetDefaultConfigDirectory();
 
             var process = Process.Start(startInfo)
                 ?? throw new InvalidOperationException("Windows did not create the Core host process.");

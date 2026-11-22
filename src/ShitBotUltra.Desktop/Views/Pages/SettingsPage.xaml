@@ -32,7 +32,7 @@
             <StackPanel Spacing="6">
                 <TextBlock Text="{x:Bind I18n.Text('Core configuration directory'), Mode=OneWay}" FontWeight="SemiBold" />
                 <TextBlock Text="{x:Bind ViewModel.ConfigDirectory, Mode=OneWay}" TextWrapping="Wrap" />
-                <TextBlock Text="{x:Bind I18n.Text('The Core owns its database and runtime files. Desktop uses the documented default user configuration directory.'), Mode=OneWay}" Opacity="0.7" TextWrapping="Wrap" />
+                <TextBlock Text="{x:Bind I18n.Text('The Core owns its database and runtime files. Desktop stores them beside its executable.'), Mode=OneWay}" Opacity="0.7" TextWrapping="Wrap" />
                 <Button Content="{x:Bind I18n.Text('Open configuration directory'), Mode=OneWay}" Command="{x:Bind ViewModel.OpenConfigDirectoryCommand}" HorizontalAlignment="Left" />
             </StackPanel>
             <StackPanel Spacing="6">

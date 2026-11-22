@@ -6,10 +6,10 @@
 - Windows App SDK 2.7.0 (stable channel), CommunityToolkit.Mvvm 8.4.2 and Microsoft.Extensions.DependencyInjection 10.0.0.
 - Root namespace: `shitbotteam.ultra.desktop`.
 - Minimum target: Windows 10 build 19041.
-- The app is unpackaged (`WindowsPackageType=None`) because the planned installer and update handoff are owned by this repository. Publish profiles are provided for `win-x64` and `win-arm64`; both are .NET and Windows App SDK self-contained. Native Windows App SDK files remain side-by-side, so `PublishSingleFile` is intentionally disabled.
-- The Windows packaging script builds the Desktop and a minimal Go host linked to Core, placing that host beside Desktop as `sbu.exe`. No separately installed CLI is needed. The executable path and arguments remain configurable for compatible hosts.
+- The app is unpackaged (`WindowsPackageType=None`) because the planned installer and update handoff are owned by this repository. Publish profiles are provided for `win-x64` and `win-arm64`; both are .NET and Windows App SDK self-contained. The release script publishes a single-file EXE with `IncludeAllContentForSelfExtract`, so its native Windows App SDK files are extracted before startup rather than distributed beside the EXE.
+- The Windows packaging script builds the Desktop and a minimal Go host linked to Core, then adds that host, licenses and notices to the single-file payload. At runtime the extracted `sbu.exe` remains beside Desktop from the application's point of view, so no separately installed CLI is needed. The executable path and arguments remain configurable for compatible hosts.
 
-The package is an unpackaged, self-contained directory in a ZIP; users extract the complete directory and run the Desktop executable. It does not provide an installer, shortcuts, or automatic Desktop upgrades. See [Windows packaging](windows-package.md).
+The package is an unpackaged, self-contained distribution EXE named `ShitBotUltra.Desktop.exe`; users run it directly and the .NET bundle extracts its private runtime payload automatically. Its filename must remain unchanged so WinUI can resolve the app PRI. It does not provide an installer, shortcuts, an uninstaller, or automatic Desktop upgrades. See [Windows packaging](windows-package.md).
 
 ## Source layout
 
@@ -28,7 +28,7 @@ Views depend on ViewModels. ViewModels depend on service abstractions and Core c
 
 ## Core connection
 
-The default Core URL is `http://127.0.0.1:17880/`. Non-loopback endpoints must use HTTPS. Every management request uses the Bearer token; the token is held in memory and is never written to `desktop.settings.json`. If the default Core credential file exists, Settings can read `%APPDATA%/ShitBotUltra/secrets/admin.token` for the current connection attempt.
+The default Core URL is `http://127.0.0.1:17880/`. Non-loopback endpoints must use HTTPS. Every management request uses the Bearer token; the token is held in memory and is never written to `desktop.settings.json`. If the local Core credential file exists, Settings can read `secrets/admin.token` beside the launched Desktop EXE for the current connection attempt.
 
 The initial shell uses these management routes:
 
@@ -51,7 +51,7 @@ Core validates and persists configuration, creates backups and reports whether a
 - An optional `MinimizeToTrayOnClose` preference keeps the window available from the Windows notification area. The tray Exit command closes Desktop; it does not terminate Core.
 - Closing the Desktop window disconnects its event stream and releases its process handle; it deliberately leaves a managed Core process running.
 
-The Core configuration directory follows Go's documented user configuration directory and is displayed as `%APPDATA%/ShitBotUltra` on Windows. Desktop does not accept a custom config directory until its host exposes a documented matching option; this avoids displaying a setting that the host would silently ignore.
+Desktop uses the directory containing the launched EXE as the Core configuration directory. It passes that directory to its bundled host explicitly because a single-file .NET app extracts `sbu.exe` to a temporary directory before startup. Core configuration, database, secrets and runtime files therefore stay beside the external EXE rather than under `%APPDATA%`; Desktop preferences are `desktop.settings.json` beside the EXE and its lifecycle log is under `logs` there. Existing AppData data is intentionally not migrated, deleted or overwritten.
 
 ## Current delivery boundary
 

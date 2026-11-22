@@ -11,8 +11,7 @@ public sealed class DesktopSettingsStore
     };
 
     private readonly string _settingsPath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "ShitBotUltra",
+        DesktopPaths.ExecutableDirectory,
         "desktop.settings.json");
 
     public async Task<DesktopSettings> LoadAsync(CancellationToken cancellationToken = default)

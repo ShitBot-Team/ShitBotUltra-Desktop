@@ -41,6 +41,7 @@ if (-not $OutputDirectory) { $OutputDirectory = Join-Path $repo 'artifacts' }
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 $temp = Join-Path ([IO.Path]::GetTempPath()) ('shitbotultra-package-' + [guid]::NewGuid().ToString('N'))
 $publish = Join-Path $temp 'publish'
+$releaseAssets = Join-Path $temp 'release-assets'
 $workspace = Join-Path $temp 'go.work'
 $oldWork = $env:GOWORK
 $oldGoOs = $env:GOOS
@@ -48,7 +49,7 @@ $oldGoArch = $env:GOARCH
 $oldCgo = $env:CGO_ENABLED
 
 try {
-    New-Item -ItemType Directory -Path $temp, $publish -Force | Out-Null
+    New-Item -ItemType Directory -Path $temp, $publish, $releaseAssets -Force | Out-Null
     if (-not $CoreSource) {
         $CoreSource = Join-Path $temp 'core'
         if ($CoreRef) {
@@ -85,6 +86,10 @@ try {
     try { Invoke-Native go @('work', 'init', $hostSource, $CoreSource) }
     finally { Pop-Location }
     $env:GOWORK = $workspace
+
+    $coreReplacement = 'github.com/ShitBot-Team/ShitBotUltra@v0.0.0=' + $CoreSource
+    Invoke-Native go @('work', 'edit', '-replace', $coreReplacement, $workspace)
+
     $env:GOOS = 'windows'
     $env:GOARCH = if ($Architecture -eq 'x64') { 'amd64' } else { 'arm64' }
     $env:CGO_ENABLED = '0'
@@ -93,18 +98,16 @@ try {
         Invoke-Native go @('build', '-trimpath', '-buildvcs=false', '-ldflags', "-X main.version=$revision", '-o', (Join-Path $temp 'sbu.exe'), '.')
     } finally { Pop-Location }
 
-    # WinUI's compiler runs on Windows. Publish the desktop with its runtime.
+    # WinUI's compiler runs on Windows. The single-file bundle extracts its
+    # full payload before startup, so the existing AppContext.BaseDirectory
+    # contract still finds the bundled Core host and notices as real files.
     $rid = "win-$Architecture"
     $platform = if ($Architecture -eq 'x64') { 'x64' } else { 'ARM64' }
-    Invoke-Native dotnet @('publish', $project, '-c', 'Release', '-r', $rid, '--self-contained', 'true', ('-p:Platform=' + $platform), '-p:WindowsAppSDKSelfContained=true', '-p:PublishSingleFile=false', '-o', $publish)
-    Copy-Item (Join-Path $temp 'sbu.exe') (Join-Path $publish 'sbu.exe')
-    if (-not (Test-Path (Join-Path $publish 'ShitBotUltra.Desktop.exe')) -or -not (Test-Path (Join-Path $publish 'sbu.exe'))) {
-        throw 'The Desktop executable or bundled Core host is missing from the publish directory.'
-    }
-    Copy-Item (Join-Path $repo 'LICENSE') (Join-Path $publish 'LICENSE-Desktop.txt')
-    Copy-Item (Join-Path $CoreSource 'LICENSE') (Join-Path $publish 'LICENSE-Core.txt')
+    Copy-Item (Join-Path $temp 'sbu.exe') (Join-Path $releaseAssets 'sbu.exe')
+    Copy-Item (Join-Path $repo 'LICENSE') (Join-Path $releaseAssets 'LICENSE-Desktop.txt')
+    Copy-Item (Join-Path $CoreSource 'LICENSE') (Join-Path $releaseAssets 'LICENSE-Core.txt')
     # Keep the bundled Core's third-party attributions with their documented paths.
-    $notices = Join-Path $publish 'core-source-notices'
+    $notices = Join-Path $releaseAssets 'core-source-notices'
     New-Item -ItemType Directory -Path $notices -Force | Out-Null
     foreach ($name in @('THIRD_PARTY_NOTICES.md', 'go.mod', 'go.sum')) {
         $sourceFile = Join-Path $CoreSource $name
@@ -138,13 +141,39 @@ try {
         "Core revision: $revision",
         "Core working tree has uncommitted changes: $dirty",
         "Target: $rid",
-        'Launch ShitBotUltra.Desktop.exe. Core data is stored in %APPDATA%\ShitBotUltra.',
+        'The generated EXE self-extracts before launching Desktop. Core data, Desktop preferences and logs are stored beside the launched EXE.',
         'Core host updates are not configured in this bundle.'
-    ) | Set-Content -Encoding UTF8 (Join-Path $publish 'SOURCE-INFO.txt')
+    ) | Set-Content -Encoding UTF8 (Join-Path $releaseAssets 'SOURCE-INFO.txt')
+
+    Invoke-Native dotnet @(
+        'publish', $project, '-c', 'Release', '-r', $rid, '--self-contained', 'true',
+        ('-p:Platform=' + $platform),
+        '-p:WindowsAppSDKSelfContained=true',
+        '-p:EnableMsixTooling=true',
+        '-p:PublishSingleFile=true',
+        '-p:IncludeAllContentForSelfExtract=true',
+        '-p:IncludeNativeLibrariesForSelfExtract=true',
+        '-p:DebugType=None',
+        '-p:DebugSymbols=false',
+        ('-p:BundledReleaseAssetsPath=' + $releaseAssets),
+        '-o', $publish
+    )
+    $desktopExecutable = Join-Path $publish 'ShitBotUltra.Desktop.exe'
+    $publishedEntries = @(Get-ChildItem -LiteralPath $publish -Force)
+    if ((-not (Test-Path -LiteralPath $desktopExecutable)) -or $publishedEntries.Count -ne 1 -or $publishedEntries[0].PSIsContainer -or $publishedEntries[0].Name -ne 'ShitBotUltra.Desktop.exe') {
+        throw 'Single-file publish produced files other than ShitBotUltra.Desktop.exe.'
+    }
+
     New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
-    $zip = Join-Path $OutputDirectory ("ShitBotUltra-Desktop-$rid-" + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + [guid]::NewGuid().ToString('N').Substring(0, 8) + '.zip')
-    Compress-Archive -Path (Join-Path $publish '*') -DestinationPath $zip -CompressionLevel Optimal
-    Write-Host "Created $zip"
+    # Unpackaged WinUI resolves ms-appx resources from the EXE's base name.
+    # Keep this identical to the project PRI name; renaming the single-file
+    # executable causes XAML resource loading to fail at startup.
+    $bundle = Join-Path $OutputDirectory 'ShitBotUltra.Desktop.exe'
+    if (Test-Path -LiteralPath $bundle) {
+        throw "Output executable already exists: $bundle. Choose another -OutputDirectory or remove it yourself before packaging."
+    }
+    Copy-Item -LiteralPath $desktopExecutable -Destination $bundle
+    Write-Host "Created $bundle"
 } finally {
     $env:GOWORK = $oldWork
     $env:GOOS = $oldGoOs

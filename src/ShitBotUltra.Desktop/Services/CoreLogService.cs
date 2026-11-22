@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Channels;
+using shitbotteam.ultra.desktop.Models;
 
 namespace shitbotteam.ultra.desktop.Services;
 
@@ -41,10 +42,7 @@ public sealed class CoreLogService : IAsyncDisposable
     private readonly Task _writer;
     private bool _disposed;
 
-    public string LogDirectory { get; } = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "ShitBotUltra",
-        "logs");
+    public string LogDirectory { get; } = Path.Combine(DesktopPaths.ExecutableDirectory, "logs");
 
     public string LogFilePath => Path.Combine(LogDirectory, "desktop.log");
 
