@@ -30,7 +30,7 @@
             </StackPanel>
             <StackPanel Spacing="6">
                 <TextBlock Text="Admin token" FontWeight="SemiBold" />
-                <PasswordBox x:Name="AdminTokenBox" PasswordChanged="OnPasswordChanged" PlaceholderText="Leave blank to read secrets/admin.token" />
+                <PasswordBox x:Name="AdminTokenBox" PasswordChanged="OnPasswordChanged" PlaceholderText="Blank: read local token only for loopback" />
             </StackPanel>
             <ToggleSwitch Header="Start or attach to Core when Desktop opens" IsOn="{x:Bind ViewModel.StartCoreOnLaunch, Mode=TwoWay}" />
             <ToggleSwitch Header="Minimize to the system tray when closing the window" IsOn="{x:Bind ViewModel.MinimizeToTrayOnClose, Mode=TwoWay}" />

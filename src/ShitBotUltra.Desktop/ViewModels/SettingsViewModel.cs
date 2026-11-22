@@ -148,6 +148,11 @@ public partial class SettingsViewModel : ObservableObject
             await _settingsStore.SaveAsync(settings);
             ApplySavedSettings(settings);
 
+            if (string.IsNullOrWhiteSpace(TokenInput) && !CoreEndpoint.Parse(settings.CoreEndpoint).IsLoopback)
+            {
+                StatusMessage = "Enter the remote Core admin token explicitly. The local token file is only used for loopback connections.";
+                return;
+            }
             var token = string.IsNullOrWhiteSpace(TokenInput)
                 ? await CoreCredentialReader.TryReadAdminTokenAsync(ConfigDirectory)
                 : TokenInput;

@@ -226,7 +226,7 @@ public sealed partial class CoreApiClient
         var hasData = false;
         var dataOverflow = false;
 
-        while (await reader.ReadLineAsync(cancellationToken) is { } line)
+        await foreach (var line in ReadSseLinesAsync(reader, cancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (line.Length == 0)
@@ -263,11 +263,13 @@ public sealed partial class CoreApiClient
 
             switch (field)
             {
-                case "id" when !value.Contains('\0'):
+                case "id" when value.Length <= 20 &&
+                    (value.Length == 0 || (value.All(char.IsAsciiDigit) && ulong.TryParse(value, out _))):
                     eventId = value;
                     break;
                 case "event":
-                    eventType = value.Length == 0 ? "message" : value;
+                    eventType = value.Length is > 0 and <= 128 &&
+                        value.All(c => char.IsAsciiLetterOrDigit(c) || c is '.' or '-' or '_') ? value : "message";
                     break;
                 case "data":
                     hasData = true;
@@ -291,6 +293,37 @@ public sealed partial class CoreApiClient
                 dataOverflow ? "[event payload omitted: over 256 KiB]" : data.ToString(0, data.Length - 1),
                 DateTimeOffset.UtcNow);
         }
+    }
+
+    private static async IAsyncEnumerable<string> ReadSseLinesAsync(
+        StreamReader reader, [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        var buffer = new char[4096];
+        var line = new StringBuilder();
+        var skipLineFeed = false;
+        int count;
+        while ((count = await reader.ReadAsync(buffer.AsMemory(), cancellationToken)) != 0)
+        {
+            for (var index = 0; index < count; index++)
+            {
+                var character = buffer[index];
+                if (skipLineFeed && character == '\n') { skipLineFeed = false; continue; }
+                skipLineFeed = false;
+                if (character is '\r' or '\n')
+                {
+                    var complete = line.ToString();
+                    line.Clear();
+                    skipLineFeed = character == '\r';
+                    yield return complete;
+                }
+                else
+                {
+                    if (line.Length >= 256 * 1024) throw new InvalidDataException("A Core event stream line exceeded 256 KiB.");
+                    line.Append(character);
+                }
+            }
+        }
+        if (line.Length != 0) yield return line.ToString();
     }
 
     private async Task<T> SendJsonAsync<T>(
@@ -318,7 +351,7 @@ public sealed partial class CoreApiClient
         using var request = CreateRequest(method, path, body, ifMatch);
         return await _httpClient.SendAsync(
             request,
-            HttpCompletionOption.ResponseHeadersRead,
+            HttpCompletionOption.ResponseContentRead,
             timeout.Token);
     }
 

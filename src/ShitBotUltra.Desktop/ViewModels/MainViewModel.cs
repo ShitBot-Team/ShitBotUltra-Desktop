@@ -136,6 +136,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
         {
             await _eventStream.StopAsync();
             var endpoint = CoreEndpoint.Parse(endpointText);
+            IsManagedProcess = _processManager.IsManagedProcessFor(endpoint);
             _apiClient.Configure(endpoint, adminToken);
             var coreStatus = await _apiClient.GetStatusAsync(cancellationToken);
             ValidateCoreContract(coreStatus);
@@ -151,7 +152,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
         }
         catch (Exception exception)
         {
-            _logService.Warning("Core", $"Connection failed: {exception.Message}");
+            _logService.Warning("Core", $"Connection failed ({exception.GetType().Name}).");
             _apiClient.ClearCredentials();
             Status = null;
             Dashboard = null;
@@ -202,10 +203,12 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
 
         IsBusy = true;
         ErrorMessage = string.Empty;
+        Uri? requestedEndpoint = null;
         try
         {
             var settings = await _settingsStore.LoadAsync();
             var endpoint = CoreEndpoint.Parse(settings.CoreEndpoint);
+            requestedEndpoint = endpoint;
             var disposition = await _processManager.StartOrAttachAsync(
                 settings.CliExecutablePath,
                 settings.CliArguments,
@@ -234,11 +237,19 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
             {
                 await _eventStream.StopAsync();
                 _apiClient.ClearCredentials();
+                Status = null;
+                Dashboard = null;
+                WebUiEnabled = false;
+                ConnectionRows.Clear();
+                ConnectionState = disposition == CoreStartDisposition.StartedByDesktop
+                    ? "Core started by Desktop. Sign in to load management data."
+                    : "Core endpoint reachable. Sign in to load management data.";
             }
         }
         catch (Exception exception)
         {
-            IsManagedProcess = _processManager.IsManagedProcessRunning;
+            IsManagedProcess = _processManager.IsManagedProcessFor(
+                _apiClient.IsAuthenticated ? _apiClient.ConfiguredEndpoint : requestedEndpoint);
             ErrorMessage = exception.Message;
             _logService.Error("Process", $"Core start/attach failed: {exception.Message}");
             ConnectionState = "Core could not be started or reached.";
@@ -450,13 +461,18 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
     {
         _dispatcher.Enqueue(() =>
         {
+            // An exit notification can arrive after a replacement process starts,
+            // or while Desktop is connected to a different independent Core.
+            if (_processManager.IsManagedProcessRunning) return;
+            var wasCurrent = IsManagedProcess;
             IsManagedProcess = false;
+            _logService.Warning("Process", $"Managed Core process exited with code {exitCode}.");
+            if (!wasCurrent) return;
             Status = null;
             Dashboard = null;
             WebUiEnabled = false;
             ConnectionRows.Clear();
             ConnectionState = $"Managed Core exited (code {exitCode}).";
-            _logService.Warning("Process", $"Managed Core process exited with code {exitCode}.");
             _ = _eventStream.StopAsync();
         });
     }

@@ -37,6 +37,7 @@ public sealed class TrayIconService : IDisposable
     private readonly IntPtr _windowHandle;
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly SubclassProcedure _subclassProcedure;
+    private readonly uint _taskbarCreatedMessage;
     private bool _iconAdded;
     private bool _allowClose;
     private bool _disposed;
@@ -75,6 +76,7 @@ public sealed class TrayIconService : IDisposable
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread()
             ?? throw new InvalidOperationException("The WinUI dispatcher is unavailable.");
         _subclassProcedure = WindowSubclassProcedure;
+        _taskbarCreatedMessage = RegisterWindowMessage("TaskbarCreated");
 
         if (_windowHandle == IntPtr.Zero
             || !SetWindowSubclass(_windowHandle, _subclassProcedure, SubclassId, IntPtr.Zero))
@@ -134,6 +136,15 @@ public sealed class TrayIconService : IDisposable
         UIntPtr subclassId,
         IntPtr referenceData)
     {
+        if (_taskbarCreatedMessage != 0 && message == _taskbarCreatedMessage && _minimizeOnClose)
+        {
+            // Explorer discards notification icons after restarting. Never hide
+            // the only window if the icon cannot be restored.
+            _iconAdded = false;
+            try { AddIcon(); }
+            catch { _minimizeOnClose = false; RestoreWindow(); }
+        }
+
         if (message == WmClose && MinimizeOnClose && !_allowClose)
         {
             ShowWindow(windowHandle, SwHide);
@@ -273,6 +284,9 @@ public sealed class TrayIconService : IDisposable
     [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool Shell_NotifyIcon(uint message, ref NotifyIconData data);
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern uint RegisterWindowMessage(string name);
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern IntPtr LoadIcon(IntPtr instance, IntPtr iconName);

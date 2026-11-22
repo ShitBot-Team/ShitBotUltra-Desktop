@@ -13,6 +13,7 @@ public sealed class CoreProcessManager : IDisposable
     private readonly CoreApiClient _apiClient;
     private readonly SemaphoreSlim _lifecycleLock = new(1, 1);
     private Process? _managedProcess;
+    private Uri? _managedEndpoint;
     private bool _disposed;
 
     public CoreProcessManager(CoreApiClient apiClient)
@@ -23,6 +24,9 @@ public sealed class CoreProcessManager : IDisposable
     public event Action<int>? ManagedProcessExited;
 
     public bool IsManagedProcessRunning => _managedProcess is { HasExited: false };
+
+    public bool IsManagedProcessFor(Uri? endpoint) => endpoint is not null
+        && Equals(_managedEndpoint, endpoint) && IsManagedProcessRunning;
 
     public async Task<CoreStartDisposition> StartOrAttachAsync(
         string executablePath,
@@ -36,9 +40,9 @@ public sealed class CoreProcessManager : IDisposable
             ObjectDisposedException.ThrowIf(_disposed, this);
             if (_managedProcess is { HasExited: false })
             {
-                if (!endpoint.IsLoopback)
+                if (!Equals(_managedEndpoint, endpoint))
                 {
-                    throw new InvalidOperationException("A local Core process is already managed by this Desktop session; it cannot be repurposed for a remote endpoint.");
+                    throw new InvalidOperationException("A Core process is already managed at another endpoint. Stop or reconnect to that process before starting another.");
                 }
 
                 if (!await _apiClient.ProbeAsync(endpoint, cancellationToken))
@@ -91,6 +95,7 @@ public sealed class CoreProcessManager : IDisposable
             process.EnableRaisingEvents = true;
             process.Exited += OnManagedProcessExited;
             _managedProcess = process;
+            _managedEndpoint = endpoint;
             WindowsConsoleControl.TryHideConsole((uint)process.Id);
 
             var deadline = Stopwatch.StartNew();
@@ -233,6 +238,7 @@ public sealed class CoreProcessManager : IDisposable
         process.Exited -= OnManagedProcessExited;
         process.Dispose();
         _managedProcess = null;
+        _managedEndpoint = null;
     }
 
     public void Dispose()
@@ -248,6 +254,7 @@ public sealed class CoreProcessManager : IDisposable
             process.Exited -= OnManagedProcessExited;
             process.Dispose();
             _managedProcess = null;
+            _managedEndpoint = null;
         }
 
         _lifecycleLock.Dispose();

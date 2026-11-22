@@ -38,7 +38,8 @@ public partial class App : Application
             CheckCertificateRevocationList = true
         })
         {
-            Timeout = Timeout.InfiniteTimeSpan
+            Timeout = Timeout.InfiniteTimeSpan,
+            MaxResponseContentBufferSize = 16L * 1024 * 1024
         });
         services.AddSingleton<CoreApiClient>();
         services.AddSingleton<CoreLogService>();
