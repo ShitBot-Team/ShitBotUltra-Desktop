@@ -20,7 +20,7 @@ public partial class App : Application
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        _window = new MainWindow(Services);
+        _window = Services.GetRequiredService<MainWindow>();
         _window.Activate();
     }
 

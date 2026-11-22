@@ -33,6 +33,7 @@
                 <PasswordBox x:Name="AdminTokenBox" PasswordChanged="OnPasswordChanged" PlaceholderText="Leave blank to read secrets/admin.token" />
             </StackPanel>
             <ToggleSwitch Header="Start or attach to Core when Desktop opens" IsOn="{x:Bind ViewModel.StartCoreOnLaunch, Mode=TwoWay}" />
+            <ToggleSwitch Header="Minimize to the system tray when closing the window" IsOn="{x:Bind ViewModel.MinimizeToTrayOnClose, Mode=TwoWay}" />
             <StackPanel Orientation="Horizontal" Spacing="8">
                 <Button Content="Save preferences" Command="{x:Bind ViewModel.SaveCommand}" />
                 <Button Content="Discard changes and reload" Click="OnReloadDiscardClicked" />

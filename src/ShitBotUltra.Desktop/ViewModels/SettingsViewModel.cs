@@ -14,6 +14,7 @@ public partial class SettingsViewModel : ObservableObject
     private string _savedCliExecutablePath = string.Empty;
     private string _savedCliArguments = string.Empty;
     private bool _savedStartCoreOnLaunch;
+    private bool _savedMinimizeToTrayOnClose;
 
     [ObservableProperty]
     private string endpoint = "http://127.0.0.1:17880/";
@@ -26,6 +27,9 @@ public partial class SettingsViewModel : ObservableObject
 
     [ObservableProperty]
     private bool startCoreOnLaunch;
+
+    [ObservableProperty]
+    private bool minimizeToTrayOnClose;
 
     [ObservableProperty]
     private string tokenInput = string.Empty;
@@ -45,7 +49,10 @@ public partial class SettingsViewModel : ObservableObject
         && (!string.Equals(Endpoint, _savedEndpoint, StringComparison.Ordinal)
             || !string.Equals(CliExecutablePath, _savedCliExecutablePath, StringComparison.Ordinal)
             || !string.Equals(CliArguments, _savedCliArguments, StringComparison.Ordinal)
-            || StartCoreOnLaunch != _savedStartCoreOnLaunch);
+            || StartCoreOnLaunch != _savedStartCoreOnLaunch
+            || MinimizeToTrayOnClose != _savedMinimizeToTrayOnClose);
+
+    public event Action<DesktopSettings>? SettingsApplied;
 
     public SettingsViewModel(DesktopSettingsStore settingsStore, MainViewModel mainViewModel)
     {
@@ -60,6 +67,8 @@ public partial class SettingsViewModel : ObservableObject
     partial void OnCliArgumentsChanged(string value) => OnPropertyChanged(nameof(IsDirty));
 
     partial void OnStartCoreOnLaunchChanged(bool value) => OnPropertyChanged(nameof(IsDirty));
+
+    partial void OnMinimizeToTrayOnCloseChanged(bool value) => OnPropertyChanged(nameof(IsDirty));
 
     partial void OnHasLoadedChanged(bool value) => OnPropertyChanged(nameof(IsDirty));
 
@@ -198,7 +207,8 @@ public partial class SettingsViewModel : ObservableObject
             CoreEndpoint = CoreEndpoint.Normalize(Endpoint),
             CliExecutablePath = Path.GetFullPath(CliExecutablePath.Trim()),
             CliArguments = CliArguments.Trim(),
-            StartCoreOnLaunch = StartCoreOnLaunch
+            StartCoreOnLaunch = StartCoreOnLaunch,
+            MinimizeToTrayOnClose = MinimizeToTrayOnClose
         };
     }
 
@@ -208,11 +218,14 @@ public partial class SettingsViewModel : ObservableObject
         CliExecutablePath = settings.CliExecutablePath;
         CliArguments = settings.CliArguments;
         StartCoreOnLaunch = settings.StartCoreOnLaunch;
+        MinimizeToTrayOnClose = settings.MinimizeToTrayOnClose;
         _savedEndpoint = Endpoint;
         _savedCliExecutablePath = CliExecutablePath;
         _savedCliArguments = CliArguments;
         _savedStartCoreOnLaunch = StartCoreOnLaunch;
+        _savedMinimizeToTrayOnClose = MinimizeToTrayOnClose;
         HasLoaded = true;
         OnPropertyChanged(nameof(IsDirty));
+        SettingsApplied?.Invoke(settings);
     }
 }

@@ -48,10 +48,11 @@ Core validates and persists configuration, creates backups and reports whether a
 - A graceful stop is sent only to the process started by this Desktop session. The attached instance is never stopped.
 - Force Stop is a separate, explicit process-tree termination action.
 - An optional `StartCoreOnLaunch` preference starts or attaches during Desktop startup.
+- An optional `MinimizeToTrayOnClose` preference keeps the window available from the Windows notification area. The tray Exit command closes Desktop; it does not terminate Core.
 - Closing the Desktop window disconnects its event stream and releases its process handle; it deliberately leaves a managed Core process running.
 
 The Core configuration directory follows Go's documented user configuration directory and is displayed as `%APPDATA%/ShitBotUltra` on Windows. Desktop does not accept a custom config directory until the CLI exposes a documented matching option; this avoids displaying a setting that the host would silently ignore.
 
 ## Current delivery boundary
 
-The first implementation slices include the app shell, dashboard, connection summary, configuration source editor, event stream, local preferences, Core attachment and owned-process lifecycle, optional Core startup on Desktop launch, configurable CLI arguments and current-session WebUI control. Tray integration, offline configuration locking, log-file capture, update installation, plugin/template management and import workflows remain separate follow-up slices. No tests, build, publish or runtime checks were run.
+The first implementation slices include the app shell, dashboard, connection summary, configuration source editor, event stream, local preferences, Core attachment and owned-process lifecycle, optional Core startup on Desktop launch, configurable CLI arguments, current-session WebUI control and the Windows notification-area icon. Offline configuration locking, log-file capture, update installation, plugin/template management and import workflows remain separate follow-up slices. No tests, build, publish or runtime checks were run.

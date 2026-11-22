@@ -9,6 +9,8 @@ public sealed record DesktopSettings
     public string CliArguments { get; init; } = string.Empty;
 
     public bool StartCoreOnLaunch { get; init; }
+
+    public bool MinimizeToTrayOnClose { get; init; }
 }
 
 public static class CorePaths
