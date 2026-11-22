@@ -9,7 +9,7 @@ using shitbotteam.ultra.desktop.Models;
 
 namespace shitbotteam.ultra.desktop.Services;
 
-public sealed class CoreApiClient
+public sealed partial class CoreApiClient
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {

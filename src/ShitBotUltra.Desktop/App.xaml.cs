@@ -12,6 +12,8 @@ public partial class App : Application
     private static IServiceProvider Services { get; set; } = null!;
     private Window? _window;
 
+    public static IntPtr MainWindowHandle { get; private set; }
+
     public App()
     {
         InitializeComponent();
@@ -21,6 +23,7 @@ public partial class App : Application
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         _window = Services.GetRequiredService<MainWindow>();
+        MainWindowHandle = WinRT.Interop.WindowNative.GetWindowHandle(_window);
         _window.Activate();
     }
 
@@ -55,6 +58,7 @@ public partial class App : Application
         services.AddSingleton<EventsViewModel>();
         services.AddSingleton<SettingsViewModel>();
         services.AddSingleton<LogsViewModel>();
+        services.AddSingleton<PluginsViewModel>();
 
         services.AddTransient<DashboardPage>();
         services.AddTransient<ConnectionsPage>();
@@ -62,6 +66,7 @@ public partial class App : Application
         services.AddTransient<EventsPage>();
         services.AddTransient<SettingsPage>();
         services.AddTransient<LogsPage>();
+        services.AddTransient<PluginsPage>();
 
         return services.BuildServiceProvider();
     }

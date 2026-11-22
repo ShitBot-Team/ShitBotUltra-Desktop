@@ -26,6 +26,11 @@
                         <SymbolIcon Symbol="Setting" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Plugins" Tag="plugins">
+                    <controls:NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Manage" />
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
                 <controls:NavigationViewItem Content="Events" Tag="events">
                     <controls:NavigationViewItem.Icon>
                         <SymbolIcon Symbol="List" />
