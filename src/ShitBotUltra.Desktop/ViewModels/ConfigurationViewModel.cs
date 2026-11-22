@@ -8,6 +8,7 @@ public partial class ConfigurationViewModel : ObservableObject
 {
     private readonly CoreApiClient _apiClient;
     private string _savedText = string.Empty;
+    private long _loadedConnectionVersion = -1;
 
     [ObservableProperty]
     private string text = string.Empty;
@@ -76,7 +77,20 @@ public partial class ConfigurationViewModel : ObservableObject
         IsBusy = true;
         try
         {
+            var requestVersion = _apiClient.ConnectionVersion;
+            var previousText = Text;
             var snapshot = await _apiClient.GetConfigurationAsync(cancellationToken);
+            if (requestVersion != _apiClient.ConnectionVersion)
+            {
+                StatusMessage = "The Core connection changed while loading. The draft was kept; load again.";
+                return;
+            }
+            if (!string.Equals(previousText, Text, StringComparison.Ordinal))
+            {
+                StatusMessage = "The draft changed while loading and was kept. Reload again when ready.";
+                return;
+            }
+            _loadedConnectionVersion = requestVersion;
             Text = snapshot.Document.Text;
             _savedText = Text;
             Revision = snapshot.ETag;
@@ -99,32 +113,70 @@ public partial class ConfigurationViewModel : ObservableObject
     private Task LoadConfigurationAsync() => LoadAsync();
 
     [RelayCommand]
-    private async Task SaveAsync()
+    private async Task ValidateAsync()
     {
-        if (!_apiClient.IsAuthenticated || IsBusy)
-        {
-            StatusMessage = "Connect to Core before saving.";
-            return;
-        }
-
-        if (!HasLoaded || string.IsNullOrWhiteSpace(Revision))
-        {
-            StatusMessage = "Load the current configuration before saving.";
-            return;
-        }
-
+        if (!CanUseLoadedSession() || IsBusy) return;
         IsBusy = true;
+        var submittedText = Text;
+        var requestVersion = _loadedConnectionVersion;
         try
         {
-            var result = await _apiClient.SaveConfigurationAsync(Text, Revision);
-            Text = result.Document.Text;
-            _savedText = Text;
+            await _apiClient.ValidateConfigurationAsync(submittedText);
+            StatusMessage = requestVersion != _apiClient.ConnectionVersion
+                ? "The Core connection changed; validate the draft again after reloading."
+                : !string.Equals(submittedText, Text, StringComparison.Ordinal)
+                    ? "The submitted version was valid, but the draft has changed since validation."
+                    : "Configuration is valid according to Core.";
+        }
+        catch (Exception exception)
+        {
+            StatusMessage = exception.Message;
+        }
+        finally { IsBusy = false; }
+    }
+
+    private bool CanUseLoadedSession()
+    {
+        if (!_apiClient.IsAuthenticated || !HasLoaded || string.IsNullOrWhiteSpace(Revision))
+        {
+            StatusMessage = "Connect to Core and load the configuration first.";
+            return false;
+        }
+        if (_loadedConnectionVersion != _apiClient.ConnectionVersion)
+        {
+            StatusMessage = "The Core connection changed. Copy your draft if needed, then discard and reload before saving.";
+            return false;
+        }
+        return true;
+    }
+
+    [RelayCommand]
+    private async Task SaveAsync()
+    {
+        if (IsBusy || !CanUseLoadedSession()) return;
+
+        IsBusy = true;
+        var submittedText = Text;
+        var requestVersion = _loadedConnectionVersion;
+        try
+        {
+            var result = await _apiClient.SaveConfigurationAsync(submittedText, Revision);
+            if (requestVersion != _apiClient.ConnectionVersion)
+            {
+                StatusMessage = "The save completed on the previous Core connection. Your current draft was kept; reload before saving again.";
+                return;
+            }
+            var changedDuringSave = !string.Equals(Text, submittedText, StringComparison.Ordinal);
+            _savedText = result.Document.Text;
+            if (!changedDuringSave) Text = result.Document.Text;
             Revision = $"\"{result.Document.Revision}\"";
             RestartRequired = result.RestartRequired;
             OnPropertyChanged(nameof(IsDirty));
-            StatusMessage = result.RestartRequired
-                ? "Configuration saved. Restart the Core host for changes to become active."
-                : "Configuration saved.";
+            StatusMessage = changedDuringSave
+                ? "The submitted version was saved. Newer edits remain unsaved."
+                : result.RestartRequired
+                    ? "Configuration saved. Restart the Core host for changes to become active."
+                    : "Configuration saved.";
         }
         catch (CoreApiException exception) when (
             exception.StatusCode == System.Net.HttpStatusCode.Conflict

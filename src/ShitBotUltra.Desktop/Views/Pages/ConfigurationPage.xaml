@@ -23,6 +23,7 @@
         <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8">
             <Button Content="Load" Command="{x:Bind ViewModel.LoadConfigurationCommand}" />
             <Button Content="Discard draft and reload" Click="OnReloadDiscardClicked" />
+            <Button Content="Validate" Command="{x:Bind ViewModel.ValidateCommand}" />
             <Button Content="Save" Command="{x:Bind ViewModel.SaveCommand}" />
             <TextBlock Text="Save status is shown above. A saved configuration may require a Core restart." VerticalAlignment="Center" Opacity="0.7" />
         </StackPanel>

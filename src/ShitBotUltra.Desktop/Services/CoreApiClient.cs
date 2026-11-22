@@ -20,6 +20,7 @@ public sealed class CoreApiClient
     private readonly object _connectionLock = new();
     private Uri? _endpoint;
     private string? _adminToken;
+    private long _connectionVersion;
 
     public CoreApiClient(HttpClient httpClient)
     {
@@ -35,6 +36,13 @@ public sealed class CoreApiClient
                 return _endpoint;
             }
         }
+    }
+
+    // Changes on every connection attempt and disconnect, including reconnects
+    // to the same address. Drafts are bound to the session that loaded them.
+    public long ConnectionVersion
+    {
+        get { lock (_connectionLock) { return _connectionVersion; } }
     }
 
     public bool IsAuthenticated
@@ -66,6 +74,7 @@ public sealed class CoreApiClient
         {
             _endpoint = normalizedEndpoint;
             _adminToken = normalizedToken;
+            _connectionVersion++;
         }
     }
 
@@ -74,6 +83,7 @@ public sealed class CoreApiClient
         lock (_connectionLock)
         {
             _adminToken = null;
+            _connectionVersion++;
         }
     }
 
@@ -161,6 +171,13 @@ public sealed class CoreApiClient
             cancellationToken) ?? throw new InvalidDataException("Core returned an empty configuration document.");
         var etag = response.Headers.ETag?.ToString() ?? $"\"{document.Revision}\"";
         return new ConfigurationSnapshot(document, etag);
+    }
+
+    public async Task ValidateConfigurationAsync(string text, CancellationToken cancellationToken = default)
+    {
+        var result = await SendJsonAsync<ConfigurationValidationResult>(
+            HttpMethod.Post, "api/v1/config/validate", new ConfigurationTextRequest(text), null, cancellationToken);
+        if (!result.Valid) throw new InvalidDataException("Core did not confirm that the configuration is valid.");
     }
 
     public Task<CoreConfigurationSaveResult> SaveConfigurationAsync(
@@ -357,6 +374,9 @@ public sealed class CoreApiClient
 
         throw new CoreApiException(response.StatusCode, code, message);
     }
+
+    private sealed record ConfigurationValidationResult(
+        [property: JsonPropertyName("valid")] bool Valid);
 
     private sealed record ConfigurationTextRequest(
         [property: JsonPropertyName("text")] string Text);
