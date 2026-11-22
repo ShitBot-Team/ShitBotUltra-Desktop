@@ -45,7 +45,9 @@ public sealed class DesktopSettingsStore
                 CliExecutablePath = string.IsNullOrWhiteSpace(settings.CliExecutablePath)
                     ? new DesktopSettings().CliExecutablePath
                     : settings.CliExecutablePath,
-                CliArguments = settings.CliArguments ?? string.Empty
+                CliArguments = string.IsNullOrWhiteSpace(settings.CliArguments)
+                    ? DesktopSettings.DefaultCliArguments
+                    : settings.CliArguments
             };
         }
         catch (JsonException exception)

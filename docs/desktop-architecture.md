@@ -44,7 +44,7 @@ Core validates and persists configuration, creates backups and reports whether a
 ## Process ownership
 
 - `Start / Attach` first probes the configured API. A reachable instance is attached, not claimed.
-- Desktop starts only a local `sbu.exe`. The argument string is explicitly configured in Settings and passed directly to the executable without a shell; Desktop does not invent or hardcode a CLI command contract.
+- Desktop starts only a local `sbu.exe`. The default command is `serve --no-webui`, matching the project plan; Settings permits an explicit override for compatible CLI variants. Arguments are passed directly to the executable without a shell.
 - A graceful stop is sent only to the process started by this Desktop session. The attached instance is never stopped.
 - Force Stop is a separate, explicit process-tree termination action.
 - An optional `StartCoreOnLaunch` preference starts or attaches during Desktop startup.
@@ -55,4 +55,6 @@ The Core configuration directory follows Go's documented user configuration dire
 
 ## Current delivery boundary
 
-The first implementation slices include the app shell, dashboard, connection summary, configuration source editor, event stream, local preferences, Core attachment and owned-process lifecycle, optional Core startup on Desktop launch, configurable CLI arguments, current-session WebUI control and the Windows notification-area icon. Offline configuration locking, log-file capture, update installation, plugin/template management and import workflows remain separate follow-up slices. No tests, build, publish or runtime checks were run.
+The current implementation slices include the app shell, dashboard, connection summary, configuration source editor, event stream, local preferences, Core attachment and owned-process lifecycle, optional Core startup on Desktop launch, the documented `serve --no-webui` default command, current-session WebUI control, the Windows notification-area icon and a rotating Desktop activity log. The log stores lifecycle messages and Core management-event summaries only; it does not store chat bodies, credentials or arbitrary API payloads. The Core API does not currently expose a process-log streaming contract, so this page does not claim to capture CLI stdout/stderr.
+
+Offline configuration editing remains disabled until Core publishes the exact cross-process lock-file contract and its Windows semantics. A Desktop-only file lock would not protect against a running Core instance and is therefore not treated as safe. Update installation, plugin/template management and import workflows are separate implementation slices. No tests, build, publish or runtime checks were run.

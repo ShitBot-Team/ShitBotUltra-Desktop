@@ -12,14 +12,33 @@ public sealed partial class MainWindow : Window
 {
     private readonly IServiceProvider _services;
     private readonly MainViewModel _viewModel;
+    private readonly SettingsViewModel _settingsViewModel;
+    private readonly LogsViewModel _logsViewModel;
+    private readonly CoreLogService _logService;
+    private TrayIconService? _trayIcon;
 
     public MainWindow(IServiceProvider services)
     {
         InitializeComponent();
         _services = services;
         _viewModel = services.GetRequiredService<MainViewModel>();
+        _settingsViewModel = services.GetRequiredService<SettingsViewModel>();
+        _logsViewModel = services.GetRequiredService<LogsViewModel>();
+        _logService = services.GetRequiredService<CoreLogService>();
         Title = "ShitBotUltra Desktop";
 
+        try
+        {
+            _trayIcon = new TrayIconService(this);
+            _trayIcon.ExitRequested += OnTrayExitRequested;
+        }
+        catch (Exception exception)
+        {
+            _logService.Warning("Tray", $"System tray integration is unavailable: {exception.Message}");
+            _viewModel.ErrorMessage = "System tray integration is unavailable. The main window can still be closed normally.";
+        }
+
+        _settingsViewModel.SettingsApplied += OnSettingsApplied;
         RootNavigation.SelectedItem = DashboardItem;
         ShowPage("overview");
         RootNavigation.Loaded += OnLoaded;
@@ -50,6 +69,7 @@ public sealed partial class MainWindow : Window
             "connections" => _services.GetRequiredService<ConnectionsPage>(),
             "configuration" => _services.GetRequiredService<ConfigurationPage>(),
             "events" => _services.GetRequiredService<EventsPage>(),
+            "logs" => _services.GetRequiredService<LogsPage>(),
             "settings" => _services.GetRequiredService<SettingsPage>(),
             _ => _services.GetRequiredService<DashboardPage>()
         };
@@ -57,16 +77,19 @@ public sealed partial class MainWindow : Window
 
     private void OnSettingsApplied(DesktopSettings settings)
     {
+        if (_trayIcon is null)
+        {
+            return;
+        }
+
         try
         {
-            if (_trayIcon is not null)
-            {
-                _trayIcon.MinimizeOnClose = settings.MinimizeToTrayOnClose;
-            }
+            _trayIcon.MinimizeOnClose = settings.MinimizeToTrayOnClose;
         }
         catch (Exception exception)
         {
             _viewModel.ErrorMessage = $"Could not update the system tray: {exception.Message}";
+            _logService.Warning("Tray", exception.Message);
         }
     }
 
@@ -85,6 +108,15 @@ public sealed partial class MainWindow : Window
             _trayIcon.Dispose();
         }
 
-        await _viewModel.DisposeAsync();
+        try
+        {
+            await _viewModel.DisposeAsync();
+            _logsViewModel.Dispose();
+            await _logService.DisposeAsync();
+        }
+        catch (Exception exception)
+        {
+            System.Diagnostics.Debug.WriteLine($"Desktop shutdown cleanup failed: {exception.Message}");
+        }
     }
 }

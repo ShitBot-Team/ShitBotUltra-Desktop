@@ -19,8 +19,8 @@
             </StackPanel>
             <StackPanel Spacing="6">
                 <TextBlock Text="CLI arguments" FontWeight="SemiBold" />
-                <TextBox Text="{x:Bind ViewModel.CliArguments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Leave blank if the CLI starts Core without arguments" />
-                <TextBlock Text="Desktop passes this argument string directly to sbu.exe without a shell. Use the syntax documented by your CLI version." Opacity="0.7" TextWrapping="Wrap" />
+                <TextBox Text="{x:Bind ViewModel.CliArguments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="serve --no-webui" />
+                <TextBlock Text="Desktop passes this argument string directly to sbu.exe without a shell. Default: serve --no-webui. Override only when using a CLI version with a different documented command." Opacity="0.7" TextWrapping="Wrap" />
             </StackPanel>
             <StackPanel Spacing="6">
                 <TextBlock Text="Core configuration directory" FontWeight="SemiBold" />

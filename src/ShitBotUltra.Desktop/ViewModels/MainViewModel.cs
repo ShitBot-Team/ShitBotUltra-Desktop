@@ -14,6 +14,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
     private readonly CoreProcessManager _processManager;
     private readonly CoreEventStreamService _eventStream;
     private readonly IUiDispatcher _dispatcher;
+    private readonly CoreLogService _logService;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(VersionText))]
@@ -79,13 +80,15 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
         DesktopSettingsStore settingsStore,
         CoreProcessManager processManager,
         CoreEventStreamService eventStream,
-        IUiDispatcher dispatcher)
+        IUiDispatcher dispatcher,
+        CoreLogService logService)
     {
         _apiClient = apiClient;
         _settingsStore = settingsStore;
         _processManager = processManager;
         _eventStream = eventStream;
         _dispatcher = dispatcher;
+        _logService = logService;
 
         _eventStream.EventReceived += OnEventReceived;
         _eventStream.StateChanged += OnEventStreamStateChanged;
@@ -97,6 +100,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
         try
         {
             var settings = await _settingsStore.LoadAsync(cancellationToken);
+            _logService.Info("Desktop", "Desktop session initialized.");
             IsManagedProcess = _processManager.IsManagedProcessRunning;
             var endpoint = CoreEndpoint.Parse(settings.CoreEndpoint);
             var reachable = await _apiClient.ProbeAsync(endpoint, cancellationToken);
@@ -143,9 +147,11 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
             WebUiEnabled = coreStatus.WebUiEnabled;
             await _eventStream.StartAsync();
             ConnectionState = $"Connected to Core {coreStatus.Version}";
+            _logService.Info("Core", $"Connected to Core {coreStatus.Version} at {endpoint}.");
         }
         catch (Exception exception)
         {
+            _logService.Warning("Core", $"Connection failed: {exception.Message}");
             _apiClient.ClearCredentials();
             Status = null;
             Dashboard = null;
@@ -205,6 +211,9 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
                 settings.CliArguments,
                 endpoint);
             IsManagedProcess = disposition == CoreStartDisposition.StartedByDesktop;
+            _logService.Info("Process", disposition == CoreStartDisposition.StartedByDesktop
+                ? "Started the local Core host process."
+                : "Attached to an existing Core endpoint.");
             ConnectionState = disposition == CoreStartDisposition.StartedByDesktop
                 ? "Core started by Desktop. Sign in to load management data."
                 : "Attached to an existing Core instance.";
@@ -231,6 +240,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
         {
             IsManagedProcess = _processManager.IsManagedProcessRunning;
             ErrorMessage = exception.Message;
+            _logService.Error("Process", $"Core start/attach failed: {exception.Message}");
             ConnectionState = "Core could not be started or reached.";
         }
         finally
@@ -270,6 +280,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
             WebUiEnabled = false;
             ConnectionRows.Clear();
             ConnectionState = "Managed Core stopped.";
+            _logService.Info("Process", "Gracefully stopped the Core process started by this Desktop session.");
             await _eventStream.StopAsync();
         }
         catch (Exception exception)
@@ -294,14 +305,23 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
             throw new InvalidOperationException("Only a process started by this Desktop session can be force-stopped.");
         }
 
-        await _processManager.ForceStopManagedAsync(cancellationToken);
-        IsManagedProcess = false;
-        Status = null;
-        Dashboard = null;
-        WebUiEnabled = false;
-        ConnectionRows.Clear();
-        ConnectionState = "Managed Core was force-stopped.";
-        await _eventStream.StopAsync();
+        IsBusy = true;
+        try
+        {
+            await _processManager.ForceStopManagedAsync(cancellationToken);
+            IsManagedProcess = false;
+            Status = null;
+            Dashboard = null;
+            WebUiEnabled = false;
+            ConnectionRows.Clear();
+            ConnectionState = "Managed Core was force-stopped.";
+            _logService.Warning("Process", "Force-stopped the Core process tree after explicit user confirmation.");
+            await _eventStream.StopAsync();
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
 
@@ -410,6 +430,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
 
     private void OnEventReceived(CoreEvent value)
     {
+        _logService.Info("Core event", $"{value.Type} (event id: {value.Id ?? "unavailable"}).");
         _dispatcher.Enqueue(() =>
         {
             if (value.Type is "reset" or "webui.changed")
@@ -421,6 +442,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
 
     private void OnEventStreamStateChanged(string value)
     {
+        _logService.Info("Event stream", value);
         _dispatcher.Enqueue(() => EventStreamState = value);
     }
 
@@ -429,10 +451,13 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
         _dispatcher.Enqueue(() =>
         {
             IsManagedProcess = false;
-            if (Status?.State == "running")
-            {
-                ConnectionState = $"Managed Core exited (code {exitCode}).";
-            }
+            Status = null;
+            Dashboard = null;
+            WebUiEnabled = false;
+            ConnectionRows.Clear();
+            ConnectionState = $"Managed Core exited (code {exitCode}).";
+            _logService.Warning("Process", $"Managed Core process exited with code {exitCode}.");
+            _ = _eventStream.StopAsync();
         });
     }
 

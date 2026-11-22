@@ -15,10 +15,9 @@ public sealed partial class SettingsPage : Page
         Loaded += OnLoaded;
     }
 
-    private async void OnLoaded(object sender, RoutedEventArgs e)
+    private void OnLoaded(object sender, RoutedEventArgs e)
     {
         AdminTokenBox.Password = ViewModel.TokenInput;
-        await ViewModel.LoadAsync();
     }
 
     private void OnPasswordChanged(object sender, RoutedEventArgs e)

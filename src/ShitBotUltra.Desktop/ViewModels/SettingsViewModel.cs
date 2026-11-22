@@ -12,7 +12,7 @@ public partial class SettingsViewModel : ObservableObject
     private readonly MainViewModel _mainViewModel;
     private string _savedEndpoint = string.Empty;
     private string _savedCliExecutablePath = string.Empty;
-    private string _savedCliArguments = string.Empty;
+    private string _savedCliArguments = DesktopSettings.DefaultCliArguments;
     private bool _savedStartCoreOnLaunch;
     private bool _savedMinimizeToTrayOnClose;
 
@@ -23,7 +23,7 @@ public partial class SettingsViewModel : ObservableObject
     private string cliExecutablePath = Path.Combine(AppContext.BaseDirectory, "sbu.exe");
 
     [ObservableProperty]
-    private string cliArguments = string.Empty;
+    private string cliArguments = DesktopSettings.DefaultCliArguments;
 
     [ObservableProperty]
     private bool startCoreOnLaunch;
@@ -206,7 +206,9 @@ public partial class SettingsViewModel : ObservableObject
         {
             CoreEndpoint = CoreEndpoint.Normalize(Endpoint),
             CliExecutablePath = Path.GetFullPath(CliExecutablePath.Trim()),
-            CliArguments = CliArguments.Trim(),
+            CliArguments = string.IsNullOrWhiteSpace(CliArguments)
+                ? DesktopSettings.DefaultCliArguments
+                : CliArguments.Trim(),
             StartCoreOnLaunch = StartCoreOnLaunch,
             MinimizeToTrayOnClose = MinimizeToTrayOnClose
         };

@@ -6,7 +6,9 @@ public sealed record DesktopSettings
 
     public string CliExecutablePath { get; init; } = Path.Combine(AppContext.BaseDirectory, "sbu.exe");
 
-    public string CliArguments { get; init; } = string.Empty;
+    public const string DefaultCliArguments = "serve --no-webui";
+
+    public string CliArguments { get; init; } = DefaultCliArguments;
 
     public bool StartCoreOnLaunch { get; init; }
 

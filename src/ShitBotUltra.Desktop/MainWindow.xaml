@@ -31,6 +31,11 @@
                         <SymbolIcon Symbol="List" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Activity logs" Tag="logs">
+                    <controls:NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Document" />
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
             </controls:NavigationView.MenuItems>
             <controls:NavigationView.FooterMenuItems>
                 <controls:NavigationViewItem Content="Settings" Tag="settings">

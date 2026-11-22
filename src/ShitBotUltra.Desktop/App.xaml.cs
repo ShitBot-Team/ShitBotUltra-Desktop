@@ -38,6 +38,7 @@ public partial class App : Application
             Timeout = Timeout.InfiniteTimeSpan
         });
         services.AddSingleton<CoreApiClient>();
+        services.AddSingleton<CoreLogService>();
         services.AddSingleton<DesktopSettingsStore>();
         services.AddSingleton<CoreProcessManager>();
         services.AddSingleton<CoreEventStreamService>();
@@ -48,16 +49,19 @@ public partial class App : Application
             return new WinUiDispatcher(dispatcher);
         });
 
+        services.AddSingleton<MainWindow>();
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<ConfigurationViewModel>();
         services.AddSingleton<EventsViewModel>();
         services.AddSingleton<SettingsViewModel>();
+        services.AddSingleton<LogsViewModel>();
 
         services.AddTransient<DashboardPage>();
         services.AddTransient<ConnectionsPage>();
         services.AddTransient<ConfigurationPage>();
         services.AddTransient<EventsPage>();
         services.AddTransient<SettingsPage>();
+        services.AddTransient<LogsPage>();
 
         return services.BuildServiceProvider();
     }
