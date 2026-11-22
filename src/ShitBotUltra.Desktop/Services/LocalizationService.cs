@@ -21,9 +21,59 @@ public sealed partial class LocalizationService : INotifyPropertyChanged
     {
         if (string.IsNullOrEmpty(english)) return string.Empty;
         if (!_chinese) return english;
-        return Chinese.TryGetValue(english, out var translated) || PagesChinese.TryGetValue(english, out translated)
-            ? translated : english;
+        if (Chinese.TryGetValue(english, out var translated) || PagesChinese.TryGetValue(english, out translated)
+            || MessagesChinese.TryGetValue(english, out translated)) return translated;
+        return TranslateDynamic(english);
     }
+    private string TranslateDynamic(string english)
+    {
+        // Keep server messages, identifiers and paths intact; translate only prefixes or
+        // suffixes added by Desktop itself, and retranslate the nested local error if known.
+        foreach (var (suffix, translation) in DynamicSuffixes)
+        {
+            if (english.EndsWith(suffix, StringComparison.Ordinal))
+                return Text(english[..^suffix.Length]) + translation;
+        }
+        foreach (var (prefix, translation) in DynamicPrefixes)
+        {
+            if (english.StartsWith(prefix, StringComparison.Ordinal))
+                return translation + english[prefix.Length..];
+        }
+        if (english.Length <= 256)
+        {
+            var timeout = TimeSpan.FromMilliseconds(50);
+            var options = System.Text.RegularExpressions.RegexOptions.CultureInvariant;
+            var match = System.Text.RegularExpressions.Regex.Match(english, @"^(\d+) online / (\d+) known$", options, timeout);
+            if (match.Success) return $"在线 {match.Groups[1].Value} / 已知 {match.Groups[2].Value}";
+            match = System.Text.RegularExpressions.Regex.Match(english, @"^(\d+) connected / (\d+) configured$", options, timeout);
+            if (match.Success) return $"已连接 {match.Groups[1].Value} / 已配置 {match.Groups[2].Value}";
+            match = System.Text.RegularExpressions.Regex.Match(english, @"^(\d+) reported$", options, timeout);
+            if (match.Success) return $"已报告 {match.Groups[1].Value} 个";
+            match = System.Text.RegularExpressions.Regex.Match(english, @"^Page (\d+) · (\d+) rows \(100 per page\)$", options, timeout);
+            if (match.Success) return $"第 {match.Groups[1].Value} 页 · 共 {match.Groups[2].Value} 条（每页 100 条）";
+            match = System.Text.RegularExpressions.Regex.Match(english, @"^Managed Core exited \(code (-?\d+)\)\.$", options, timeout);
+            if (match.Success) return $"Desktop 启动的 Core 已退出（代码 {match.Groups[1].Value}）。";
+        }
+        return english;
+    }
+
+    private static readonly (string English, string Chinese)[] DynamicPrefixes =
+    [
+        ("Connected to Core ", "已连接 Core "),
+        ("Instance: ", "实例："),
+        ("Desktop assembly version: ", "Desktop 程序版本："),
+        ("Available networks: ", "可用网络："),
+        ("Could not display the preview: ", "无法显示预览："),
+        ("Could not update the system tray: ", "无法更新系统托盘："),
+        ("The latest result is unknown. Verify the target and acknowledge it before executing again. Run ID: ", "最近一次结果未知。请核实目标并确认后再运行。运行 ID："),
+    ];
+    private static readonly (string English, string Chinese)[] DynamicSuffixes =
+    [
+        (" Refresh the Core state before retrying a change.", " 请先刷新 Core 状态，再重试修改。"),
+        (" Your draft was kept; reload and merge if Core reports a revision conflict.", " 草稿已保留；如 Core 报告版本冲突，请重新加载并合并。"),
+        (" Refresh the host state before retrying.", " 请刷新宿主状态后再重试。"),
+    ];
+
     public void SetPreference(string? preference)
     {
         _preference = NormalizePreference(preference);
