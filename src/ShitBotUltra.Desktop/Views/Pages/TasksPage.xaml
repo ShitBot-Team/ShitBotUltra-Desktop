@@ -1,0 +1,16 @@
+<Page
+    x:Class="shitbotteam.ultra.desktop.Views.Pages.TasksPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:shitbotteam.ultra.desktop.ViewModels">
+    <Grid Margin="28" RowDefinitions="Auto,Auto,Auto,*,Auto,Auto,*,Auto" RowSpacing="8" IsEnabled="{x:Bind ViewModel.CanEdit, Mode=OneWay}">
+        <TextBlock Text="Scheduled tasks" FontSize="30" FontWeight="SemiBold" />
+        <TextBlock Grid.Row="1" Text="{x:Bind ViewModel.SchedulerStatus, Mode=OneWay}" TextWrapping="Wrap" />
+        <StackPanel Grid.Row="2" Spacing="4"><TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" TextWrapping="Wrap" /><StackPanel Orientation="Horizontal" Spacing="8"><Button Content="Refresh" Click="OnRefresh" /><Button Content="Run selected once" Click="OnRun" /></StackPanel></StackPanel>
+        <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.Tasks, Mode=OneWay}" SelectionChanged="OnSelected"><ListView.ItemTemplate><DataTemplate x:DataType="models:ScheduledTaskRow"><StackPanel Orientation="Horizontal" Spacing="12"><TextBlock Text="{x:Bind Name}" /><TextBlock Text="{x:Bind Id}" /><TextBlock Text="{x:Bind Detail}" /></StackPanel></DataTemplate></ListView.ItemTemplate></ListView>
+        <TextBlock Grid.Row="4" Text="{x:Bind ViewModel.PendingId, Mode=OneWay}" TextWrapping="Wrap" />
+        <StackPanel Grid.Row="5" Orientation="Horizontal" Spacing="8"><Button Content="Query pending request" Click="OnQuery" /><Button Content="I verified the previous outcome" Click="OnAcknowledge" /></StackPanel>
+        <ListView Grid.Row="6" ItemsSource="{x:Bind ViewModel.Runs, Mode=OneWay}"><ListView.ItemTemplate><DataTemplate x:DataType="models:TaskRunRow"><StackPanel Orientation="Horizontal" Spacing="12"><TextBlock Text="{x:Bind Task}" /><TextBlock Text="{x:Bind Status}" /><TextBlock Text="{x:Bind Detail}" /><TextBlock Text="{x:Bind Id}" /></StackPanel></DataTemplate></ListView.ItemTemplate></ListView>
+        <TextBox Grid.Row="7" Header="Pending request details" Text="{x:Bind ViewModel.RunDetails, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" Height="100" />
+    </Grid>
+</Page>
