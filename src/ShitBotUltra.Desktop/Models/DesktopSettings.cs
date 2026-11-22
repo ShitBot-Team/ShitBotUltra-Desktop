@@ -10,7 +10,8 @@ public sealed record DesktopSettings
 
     public string CliArguments { get; init; } = DefaultCliArguments;
 
-    public bool StartCoreOnLaunch { get; init; }
+    // Fresh installs start a bundled host when present; persisted preferences win.
+    public bool StartCoreOnLaunch { get; init; } = File.Exists(Path.Combine(AppContext.BaseDirectory, "sbu.exe"));
 
     public bool MinimizeToTrayOnClose { get; init; }
 

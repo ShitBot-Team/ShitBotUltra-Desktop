@@ -210,12 +210,12 @@ public partial class SettingsViewModel : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(CliExecutablePath))
         {
-            throw new ArgumentException("The CLI executable path is required.");
+            throw new ArgumentException("The Core host executable path is required.");
         }
 
         if (CliArguments.Length > 2048 || CliArguments.Contains('\0'))
         {
-            throw new ArgumentException("CLI arguments must be 2048 characters or fewer and cannot contain NUL.");
+            throw new ArgumentException("Core host arguments must be 2048 characters or fewer and cannot contain NUL.");
         }
 
         return new DesktopSettings

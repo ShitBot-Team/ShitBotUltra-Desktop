@@ -66,19 +66,19 @@ public sealed class CoreProcessManager : IDisposable
 
             if (string.IsNullOrWhiteSpace(executablePath))
             {
-                throw new ArgumentException("A CLI executable path is required.", nameof(executablePath));
+                throw new ArgumentException("A Core host executable path is required.", nameof(executablePath));
             }
 
             arguments ??= string.Empty;
             if (arguments.Length > 2048 || arguments.Contains('\0'))
             {
-                throw new ArgumentException("CLI arguments must be 2048 characters or fewer and cannot contain NUL.", nameof(arguments));
+                throw new ArgumentException("Core host arguments must be 2048 characters or fewer and cannot contain NUL.", nameof(arguments));
             }
 
             var fullPath = Path.GetFullPath(executablePath);
             if (!File.Exists(fullPath))
             {
-                throw new FileNotFoundException("The bundled sbu.exe was not found. Set its path in Desktop settings.", fullPath);
+                throw new FileNotFoundException("The Core host sbu.exe was not found. Set its path in Desktop settings.", fullPath);
             }
 
             var startInfo = new ProcessStartInfo
@@ -106,7 +106,7 @@ public sealed class CoreProcessManager : IDisposable
                 {
                     var exitCode = process.ExitCode;
                     ReleaseExitedProcess();
-                    throw new InvalidOperationException($"sbu.exe exited before Core became ready (exit code {exitCode}).");
+                    throw new InvalidOperationException($"The Core host exited before Core became ready (exit code {exitCode}).");
                 }
 
                 if (await _apiClient.ProbeAsync(endpoint, cancellationToken))

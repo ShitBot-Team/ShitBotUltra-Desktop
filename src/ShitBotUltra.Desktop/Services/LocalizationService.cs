@@ -53,6 +53,8 @@ public sealed partial class LocalizationService : INotifyPropertyChanged
             if (match.Success) return $"第 {match.Groups[1].Value} 页 · 共 {match.Groups[2].Value} 条（每页 100 条）";
             match = System.Text.RegularExpressions.Regex.Match(english, @"^Managed Core exited \(code (-?\d+)\)\.$", options, timeout);
             if (match.Success) return $"Desktop 启动的 Core 已退出（代码 {match.Groups[1].Value}）。";
+            match = System.Text.RegularExpressions.Regex.Match(english, @"^The Core host exited before Core became ready \(exit code (-?\d+)\)\.$", options, timeout);
+            if (match.Success) return $"Core 宿主在 Core 就绪前退出（退出代码 {match.Groups[1].Value}）。";
         }
         return english;
     }
@@ -103,10 +105,10 @@ public sealed partial class LocalizationService : INotifyPropertyChanged
         ["Follow Windows"] = "跟随系统",
         ["Connection details and local host paths. Admin credentials are kept in memory only."] = "连接信息和本地宿主路径。管理员凭据仅保存在内存中。",
         ["Core management URL"] = "Core 管理地址",
-        ["CLI executable"] = "CLI 可执行文件",
+        ["Core host executable"] = "Core 宿主程序",
         ["Path to sbu.exe"] = "sbu.exe 的路径",
-        ["CLI arguments"] = "CLI 启动参数",
-        ["Desktop passes this argument string directly to sbu.exe without a shell. Default: serve --no-webui. Override only when using a CLI version with a different documented command."] = "Desktop 会将参数直接传给 sbu.exe，不经过命令行解释器。默认值：serve --no-webui。仅在 CLI 版本的文档要求不同时修改。",
+        ["Core host arguments"] = "Core 宿主启动参数",
+        ["The bundled Core host is started automatically by default. The launch arguments are passed directly to the host without a shell. Default: serve --no-webui."] = "默认会自动启动附带的 Core 宿主。Desktop 将启动参数直接传给宿主，不经过命令行解释器。默认值：serve --no-webui。",
         ["Core configuration directory"] = "Core 配置目录",
         ["The Core owns its database and runtime files. Desktop uses the documented default user configuration directory."] = "数据库和运行文件由 Core 管理。Desktop 使用约定的默认用户配置目录。",
         ["Open configuration directory"] = "打开配置目录",
@@ -124,10 +126,10 @@ public sealed partial class LocalizationService : INotifyPropertyChanged
         ["Enter an admin token or create secrets/admin.token in the Core configuration directory."] = "请输入管理员令牌，或在 Core 配置目录创建 secrets/admin.token。",
         ["Connected. The token is held in memory for this session only."] = "已连接。令牌仅在本次会话中保存在内存里。",
         ["Opened the Core configuration directory."] = "已打开 Core 配置目录。",
-        ["The CLI executable path is required."] = "必须填写 CLI 可执行文件路径。",
-        ["CLI arguments must be 2048 characters or fewer and cannot contain NUL."] = "CLI 参数最多 2048 个字符，且不能包含 NUL。",
+        ["The Core host executable path is required."] = "必须填写 Core 宿主程序路径。",
+        ["Core host arguments must be 2048 characters or fewer and cannot contain NUL."] = "Core 宿主参数最多 2048 个字符，且不能包含 NUL。",
         ["Discard Desktop preferences?"] = "放弃 Desktop 设置？",
-        ["The current endpoint or CLI path has not been saved. Reloading replaces these values with the saved preferences."] = "当前地址或 CLI 路径尚未保存。重新读取会用已保存的设置替换当前内容。",
+        ["The current endpoint, Core host path or language has not been saved. Reloading restores the saved preferences."] = "当前地址、Core 宿主路径或语言尚未保存。重新读取会恢复已保存的设置。",
         ["Discard and reload"] = "放弃并重新读取",
         ["Keep changes"] = "保留修改",
     };

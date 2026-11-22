@@ -44,7 +44,7 @@ public sealed partial class SettingsPage : Page
         var dialog = new ContentDialog
         {
             Title = I18n.Text("Discard Desktop preferences?"),
-            Content = I18n.Text("The current endpoint or CLI path has not been saved. Reloading replaces these values with the saved preferences."),
+            Content = I18n.Text("The current endpoint, Core host path or language has not been saved. Reloading restores the saved preferences."),
             PrimaryButtonText = I18n.Text("Discard and reload"),
             CloseButtonText = I18n.Text("Keep changes"),
             DefaultButton = ContentDialogButton.Close,

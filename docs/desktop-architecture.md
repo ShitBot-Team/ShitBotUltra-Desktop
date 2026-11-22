@@ -7,9 +7,9 @@
 - Root namespace: `shitbotteam.ultra.desktop`.
 - Minimum target: Windows 10 build 19041.
 - The app is unpackaged (`WindowsPackageType=None`) because the planned installer and update handoff are owned by this repository. Publish profiles are provided for `win-x64` and `win-arm64`; both are .NET and Windows App SDK self-contained. Native Windows App SDK files remain side-by-side, so `PublishSingleFile` is intentionally disabled.
-- The release layout must place the matching `sbu.exe` beside the Desktop app, or the user can set its full path in Settings. The CLI binary is not fabricated or downloaded by the app project. CLI arguments are configurable because the CLI repository and its current command-line contract were not part of this source snapshot.
+- The Windows packaging script builds the Desktop and a minimal Go host linked to Core, placing that host beside Desktop as `sbu.exe`. No separately installed CLI is needed. The executable path and arguments remain configurable for compatible hosts.
 
-The project has not been built or run in this delivery. The publish profiles describe the intended release shape; they are not build evidence. Unpackaged distribution requires the app's custom installer to handle installation, shortcuts, upgrades and removal.
+The package is an unpackaged, self-contained directory in a ZIP; users extract the complete directory and run the Desktop executable. It does not provide an installer, shortcuts, or automatic Desktop upgrades. See [Windows packaging](windows-package.md).
 
 ## Source layout
 
@@ -44,23 +44,23 @@ Core validates and persists configuration, creates backups and reports whether a
 ## Process ownership
 
 - `Start / Attach` first probes the configured API. A reachable instance is attached, not claimed.
-- Desktop starts only a local `sbu.exe`. The default command is `serve --no-webui`, matching the project plan; Settings permits an explicit override for compatible CLI variants. Arguments are passed directly to the executable without a shell.
+- Desktop starts a local Core host executable. The bundled host is called `sbu.exe` to retain the existing settings contract and accepts `serve --no-webui`. Settings permits an explicit override for a compatible host; arguments are passed directly without a shell.
 - A graceful stop is sent only to the process started by this Desktop session. The attached instance is never stopped.
 - Force Stop is a separate, explicit process-tree termination action.
-- An optional `StartCoreOnLaunch` preference starts or attaches during Desktop startup.
+- `StartCoreOnLaunch` starts or attaches during Desktop startup. It defaults to enabled for fresh settings when a bundled host exists; a previously saved value is preserved.
 - An optional `MinimizeToTrayOnClose` preference keeps the window available from the Windows notification area. The tray Exit command closes Desktop; it does not terminate Core.
 - Closing the Desktop window disconnects its event stream and releases its process handle; it deliberately leaves a managed Core process running.
 
-The Core configuration directory follows Go's documented user configuration directory and is displayed as `%APPDATA%/ShitBotUltra` on Windows. Desktop does not accept a custom config directory until the CLI exposes a documented matching option; this avoids displaying a setting that the host would silently ignore.
+The Core configuration directory follows Go's documented user configuration directory and is displayed as `%APPDATA%/ShitBotUltra` on Windows. Desktop does not accept a custom config directory until its host exposes a documented matching option; this avoids displaying a setting that the host would silently ignore.
 
 ## Current delivery boundary
 
 The Desktop contains the shell and local host controls, configuration source and section editors, credentials, activity/events, plugin authorization and lifecycle, template editing and previews, whitelist import previews/commit/restore, task monitoring, and connected-host update controls. Every mutation is delegated to the Core API and uses Core's revision/ownership checks when provided. The update page requests updates of the connected Core host only, never replaces an attached service or claims that a handoff means success.
 
-The local CLI repository in this source snapshot contains no `sbu.exe` implementation or release asset. Desktop's default executable path is therefore a release-layout expectation, not a bundled binary. The Desktop-specific updater, installer/helper, rollback, release asset naming/manifest and verified CLI bundle are not implemented. The connected host can update only when that host registers an updater and an installer.
+The bundled host links to Core's Go runtime directly and does not include a separate CLI product. Its `Updates` option is unset, so the connected-host updater is disabled in this bundle. A Desktop-specific updater, installer and rollback are not implemented.
 
-Core currently takes `run/core.lock`, but the snapshot contains neither the CLI's read-only validation command nor a documented Windows interoperability and offline transaction contract. Offline configuration editing remains disabled; Desktop does not invent an independent lock or infer that the directory is free from a failed HTTP probe.
+Core currently takes `run/core.lock`, but the snapshot contains neither a host read-only validation command nor a documented Windows interoperability and offline transaction contract. Offline configuration editing remains disabled; Desktop does not invent an independent lock or infer that the directory is free from a failed HTTP probe.
 
-The import interface retains exclusion selections when reading reports and requires a fresh unchanged ready preview before commit. Task request IDs are kept while this Desktop session remains open; after a restart consult the Core run history and verify any unknown result before another execution. The logger records Desktop lifecycle and Core management-event summaries, not CLI stdout/stderr. Credentials used for remote Core connections must be entered explicitly rather than read from the local default token file.
+The import interface retains exclusion selections when reading reports and requires a fresh unchanged ready preview before commit. Task request IDs are kept while this Desktop session remains open; after a restart consult the Core run history and verify any unknown result before another execution. The logger records Desktop lifecycle and Core management-event summaries, not host stdout/stderr. Credentials used for remote Core connections must be entered explicitly rather than read from the local default token file.
 
-No tests, builds, publish or runtime checks were run. The Windows UI, process signal behavior, API compatibility, installer behavior and complete release lifecycle still require maintainer validation. The historical build output included in the source archive reported WMC1509/WMC9999; it predates these changes and does not establish the cause or the result of a future build.
+The Windows UI, host startup and graceful stop, packaging, and API compatibility require validation on Windows before a release is described as usable. Historical build output does not establish the result of a later build.
