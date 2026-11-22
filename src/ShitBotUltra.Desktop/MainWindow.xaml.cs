@@ -73,6 +73,7 @@ public sealed partial class MainWindow : Window
             "plugins" => _services.GetRequiredService<PluginsPage>(),
             "events" => _services.GetRequiredService<EventsPage>(),
             "logs" => _services.GetRequiredService<LogsPage>(),
+            "updates" => _services.GetRequiredService<UpdatesPage>(),
             "settings" => _services.GetRequiredService<SettingsPage>(),
             _ => _services.GetRequiredService<DashboardPage>()
         };

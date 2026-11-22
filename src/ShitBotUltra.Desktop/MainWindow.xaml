@@ -49,6 +49,9 @@
                 </controls:NavigationViewItem>
             </controls:NavigationView.MenuItems>
             <controls:NavigationView.FooterMenuItems>
+                <controls:NavigationViewItem Content="Updates" Tag="updates">
+                    <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Refresh" /></controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
                 <controls:NavigationViewItem Content="Settings" Tag="settings">
                     <controls:NavigationViewItem.Icon>
                         <SymbolIcon Symbol="Setting" />
