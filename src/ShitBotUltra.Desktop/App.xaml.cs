@@ -62,6 +62,7 @@ public partial class App : Application
         services.AddSingleton<TemplatesViewModel>();
         services.AddSingleton<ImportsViewModel>();
         services.AddSingleton<UpdatesViewModel>();
+        services.AddSingleton<SectionsViewModel>();
 
         services.AddTransient<DashboardPage>();
         services.AddTransient<ConnectionsPage>();
@@ -73,6 +74,7 @@ public partial class App : Application
         services.AddTransient<TemplatesPage>();
         services.AddTransient<ImportsPage>();
         services.AddTransient<UpdatesPage>();
+        services.AddTransient<SectionsPage>();
 
         return services.BuildServiceProvider();
     }

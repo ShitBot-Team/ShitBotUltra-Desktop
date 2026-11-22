@@ -21,6 +21,9 @@
                         <SymbolIcon Symbol="World" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Configuration sections" Tag="sections">
+                    <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Setting" /></controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
                 <controls:NavigationViewItem Content="Configuration" Tag="configuration">
                     <controls:NavigationViewItem.Icon>
                         <SymbolIcon Symbol="Setting" />
