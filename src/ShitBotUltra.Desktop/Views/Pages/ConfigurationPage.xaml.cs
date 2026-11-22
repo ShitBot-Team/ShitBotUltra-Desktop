@@ -6,6 +6,7 @@ namespace shitbotteam.ultra.desktop.Views.Pages;
 
 public sealed partial class ConfigurationPage : Page
 {
+    public shitbotteam.ultra.desktop.Services.LocalizationService I18n => shitbotteam.ultra.desktop.Services.LocalizationService.Current;
     public ConfigurationViewModel ViewModel { get; }
 
     public ConfigurationPage(ConfigurationViewModel viewModel)
@@ -30,10 +31,10 @@ public sealed partial class ConfigurationPage : Page
 
         var dialog = new ContentDialog
         {
-            Title = "Discard configuration draft?",
-            Content = "The current YAML draft has not been saved. Reloading replaces it with the latest Core configuration.",
-            PrimaryButtonText = "Discard and reload",
-            CloseButtonText = "Keep draft",
+            Title = I18n.Text("Discard configuration draft?"),
+            Content = I18n.Text("The current YAML draft has not been saved. Reloading replaces it with the latest Core configuration."),
+            PrimaryButtonText = I18n.Text("Discard and reload"),
+            CloseButtonText = I18n.Text("Keep draft"),
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = XamlRoot
         };

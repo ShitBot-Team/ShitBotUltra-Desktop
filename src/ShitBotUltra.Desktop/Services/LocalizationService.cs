@@ -20,7 +20,9 @@ public sealed partial class LocalizationService : INotifyPropertyChanged
     public string Text(string? english)
     {
         if (string.IsNullOrEmpty(english)) return string.Empty;
-        return _chinese && Chinese.TryGetValue(english, out var translated) ? translated : english;
+        if (!_chinese) return english;
+        return Chinese.TryGetValue(english, out var translated) || PagesChinese.TryGetValue(english, out translated)
+            ? translated : english;
     }
     public void SetPreference(string? preference)
     {

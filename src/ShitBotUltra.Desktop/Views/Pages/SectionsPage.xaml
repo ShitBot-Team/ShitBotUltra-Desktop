@@ -4,24 +4,24 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     IsEnabled="{x:Bind ViewModel.CanEdit, Mode=OneWay}">
     <ScrollViewer><StackPanel Margin="28" Spacing="12">
-        <TextBlock Text="Configuration sections" FontSize="30" FontWeight="SemiBold" />
-        <TextBlock Text="Edit multiple related sections together. Core validates, backs up and saves them as one revision; the YAML source editor remains available separately." TextWrapping="Wrap" />
-        <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" TextWrapping="Wrap" />
-        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="Load sections" Click="OnLoad" /><Button Content="Save changed sections" Click="OnSave" /></StackPanel>
-        <TextBlock Text="Binding form" FontSize="20" FontWeight="SemiBold" />
-        <CheckBox Content="Enable bindings" IsChecked="{x:Bind ViewModel.BindingEnabled, Mode=TwoWay}" />
-        <CheckBox Content="Kick player on unbind" IsChecked="{x:Bind ViewModel.KickOnUnbind, Mode=TwoWay}" />
-        <TextBox Header="Code lifetime (seconds)" Text="{x:Bind ViewModel.Ttl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Header="Maximum attempts" Text="{x:Bind ViewModel.Attempts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Header="Attempt window (seconds)" Text="{x:Bind ViewModel.AttemptWindow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Header="Maximum players per identity" Text="{x:Bind ViewModel.MaxPlayers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <Button Content="Apply form to section draft" Click="OnApplyForm" />
-        <TextBox Header="Section draft JSON" Text="{x:Bind ViewModel.SectionsText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas" AcceptsReturn="True" TextWrapping="NoWrap" Height="420" />
-        <TextBlock Text="Create credential in Core" FontSize="20" FontWeight="SemiBold" />
-        <TextBlock Text="Use file: or env: references in configuration. Leave the value blank to generate one; existing files are never overwritten." TextWrapping="Wrap" />
-        <TextBox Header="Credential name" Text="{x:Bind ViewModel.SecretName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <PasswordBox x:Name="SecretBox" Header="Credential value (optional)" />
-        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="Create credential" Click="OnCreateSecret" /><Button Content="Clear displayed credential" Click="OnClearSecret" /></StackPanel>
-        <TextBox Header="Created credential (copy before clearing)" Text="{x:Bind ViewModel.CreatedSecret, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" Height="90" />
+        <TextBlock Text="{x:Bind I18n.Text('Configuration sections'), Mode=OneWay}" FontSize="30" FontWeight="SemiBold" />
+        <TextBlock Text="{x:Bind I18n.Text('Edit multiple related sections together. Core validates, backs up and saves them as one revision; the YAML source editor remains available separately.'), Mode=OneWay}" TextWrapping="Wrap" />
+        <TextBlock Text="{x:Bind I18n.Text(ViewModel.StatusMessage), Mode=OneWay}" TextWrapping="Wrap" />
+        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="{x:Bind I18n.Text('Load sections'), Mode=OneWay}" Click="OnLoad" /><Button Content="{x:Bind I18n.Text('Save changed sections'), Mode=OneWay}" Click="OnSave" /></StackPanel>
+        <TextBlock Text="{x:Bind I18n.Text('Binding form'), Mode=OneWay}" FontSize="20" FontWeight="SemiBold" />
+        <CheckBox Content="{x:Bind I18n.Text('Enable bindings'), Mode=OneWay}" IsChecked="{x:Bind ViewModel.BindingEnabled, Mode=TwoWay}" />
+        <CheckBox Content="{x:Bind I18n.Text('Kick player on unbind'), Mode=OneWay}" IsChecked="{x:Bind ViewModel.KickOnUnbind, Mode=TwoWay}" />
+        <TextBox Header="{x:Bind I18n.Text('Code lifetime (seconds)'), Mode=OneWay}" Text="{x:Bind ViewModel.Ttl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Header="{x:Bind I18n.Text('Maximum attempts'), Mode=OneWay}" Text="{x:Bind ViewModel.Attempts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Header="{x:Bind I18n.Text('Attempt window (seconds)'), Mode=OneWay}" Text="{x:Bind ViewModel.AttemptWindow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Header="{x:Bind I18n.Text('Maximum players per identity'), Mode=OneWay}" Text="{x:Bind ViewModel.MaxPlayers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <Button Content="{x:Bind I18n.Text('Apply form to section draft'), Mode=OneWay}" Click="OnApplyForm" />
+        <TextBox Header="{x:Bind I18n.Text('Section draft JSON'), Mode=OneWay}" Text="{x:Bind ViewModel.SectionsText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas" AcceptsReturn="True" TextWrapping="NoWrap" Height="420" />
+        <TextBlock Text="{x:Bind I18n.Text('Create credential in Core'), Mode=OneWay}" FontSize="20" FontWeight="SemiBold" />
+        <TextBlock Text="{x:Bind I18n.Text('Use file: or env: references in configuration. Leave the value blank to generate one; existing files are never overwritten.'), Mode=OneWay}" TextWrapping="Wrap" />
+        <TextBox Header="{x:Bind I18n.Text('Credential name'), Mode=OneWay}" Text="{x:Bind ViewModel.SecretName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <PasswordBox x:Name="SecretBox" Header="{x:Bind I18n.Text('Credential value (optional)'), Mode=OneWay}" />
+        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="{x:Bind I18n.Text('Create credential'), Mode=OneWay}" Click="OnCreateSecret" /><Button Content="{x:Bind I18n.Text('Clear displayed credential'), Mode=OneWay}" Click="OnClearSecret" /></StackPanel>
+        <TextBox Header="{x:Bind I18n.Text('Created credential (copy before clearing)'), Mode=OneWay}" Text="{x:Bind ViewModel.CreatedSecret, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" Height="90" />
     </StackPanel></ScrollViewer>
 </Page>

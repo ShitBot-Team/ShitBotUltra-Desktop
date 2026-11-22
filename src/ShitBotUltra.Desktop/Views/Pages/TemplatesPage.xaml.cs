@@ -9,6 +9,7 @@ namespace shitbotteam.ultra.desktop.Views.Pages;
 
 public sealed partial class TemplatesPage : Page
 {
+    public shitbotteam.ultra.desktop.Services.LocalizationService I18n => shitbotteam.ultra.desktop.Services.LocalizationService.Current;
     public TemplatesViewModel ViewModel { get; }
     private string _selectedFile = "";
     public TemplatesPage(TemplatesViewModel viewModel) { InitializeComponent(); ViewModel = viewModel; }
@@ -18,8 +19,8 @@ public sealed partial class TemplatesPage : Page
     { _selectedFile = ((ListView)sender).SelectedItem as string ?? ""; }
     private async Task<bool> Confirm(string title, string content, string action)
     {
-        var dialog = new ContentDialog { Title = title, Content = content, PrimaryButtonText = action,
-            CloseButtonText = "Cancel", DefaultButton = ContentDialogButton.Close, XamlRoot = XamlRoot };
+        var dialog = new ContentDialog { Title = I18n.Text(title), Content = I18n.Text(content), PrimaryButtonText = I18n.Text(action),
+            CloseButtonText = I18n.Text("Cancel"), DefaultButton = ContentDialogButton.Close, XamlRoot = XamlRoot };
         return await dialog.ShowAsync() == ContentDialogResult.Primary;
     }
     private async void OnOpen(object sender, RoutedEventArgs e)

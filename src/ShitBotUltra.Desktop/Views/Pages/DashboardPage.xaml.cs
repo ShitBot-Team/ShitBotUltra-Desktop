@@ -6,6 +6,7 @@ namespace shitbotteam.ultra.desktop.Views.Pages;
 
 public sealed partial class DashboardPage : Page
 {
+    public shitbotteam.ultra.desktop.Services.LocalizationService I18n => shitbotteam.ultra.desktop.Services.LocalizationService.Current;
     public MainViewModel ViewModel { get; }
 
     public DashboardPage(MainViewModel viewModel)
@@ -28,10 +29,10 @@ public sealed partial class DashboardPage : Page
     {
         var dialog = new ContentDialog
         {
-            Title = "Force stop Core?",
-            Content = "This terminates the Core process tree without waiting for normal shutdown. Use this only when graceful stop fails.",
-            PrimaryButtonText = "Force Stop",
-            CloseButtonText = "Cancel",
+            Title = I18n.Text("Force stop Core?"),
+            Content = I18n.Text("This terminates the Core process tree without waiting for normal shutdown. Use this only when graceful stop fails."),
+            PrimaryButtonText = I18n.Text("Force Stop"),
+            CloseButtonText = I18n.Text("Cancel"),
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = XamlRoot
         };

@@ -10,6 +10,9 @@ public partial class ImportSourceRow : ObservableObject
 {
     public string Id { get; init; } = "";
     public string Description { get; init; } = "";
+    public string IncludeLabel => LocalizationService.Current.Text("Include");
+    public string TargetNetworkLabel => LocalizationService.Current.Text("Target network ID");
+    internal void RefreshLanguage() { OnPropertyChanged(nameof(IncludeLabel)); OnPropertyChanged(nameof(TargetNetworkLabel)); }
     [ObservableProperty] private bool selected;
     [ObservableProperty] private string networkId = "";
 }
@@ -17,6 +20,8 @@ public partial class ImportReportRow : ObservableObject
 {
     public string Id { get; init; } = "";
     public string Player { get; init; } = "";
+    public string ExcludeLabel => LocalizationService.Current.Text("Exclude");
+    internal void RefreshLanguage() => OnPropertyChanged(nameof(ExcludeLabel));
     public string State { get; init; } = "";
     public string Reason { get; init; } = "";
     public string Details { get; init; } = "";
@@ -55,7 +60,15 @@ public partial class ImportsViewModel : ObservableObject
     public ObservableCollection<ImportReportRow> Rows { get; } = [];
     public bool HasSelectedSources => Sources.Any(s => s.Selected);
     public bool SourcesBelongToCurrentSession => _sourceSession == _api.ConnectionVersion;
-    public ImportsViewModel(CoreApiClient api) => _api = api;
+    public ImportsViewModel(CoreApiClient api)
+    {
+        _api = api;
+        LocalizationService.Current.LanguageChanged += () =>
+        {
+            foreach (var source in Sources) source.RefreshLanguage();
+            foreach (var row in Rows) row.RefreshLanguage();
+        };
+    }
 
     private async Task RunAsync(Func<Task> action)
     {

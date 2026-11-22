@@ -5,13 +5,13 @@
     xmlns:models="using:shitbotteam.ultra.desktop.ViewModels"
     IsEnabled="{x:Bind ViewModel.CanEdit, Mode=OneWay}">
     <Grid Margin="28" RowDefinitions="Auto,Auto,Auto,*,Auto,Auto,*,Auto" RowSpacing="8">
-        <TextBlock Text="Scheduled tasks" FontSize="30" FontWeight="SemiBold" />
-        <TextBlock Grid.Row="1" Text="{x:Bind ViewModel.SchedulerStatus, Mode=OneWay}" TextWrapping="Wrap" />
-        <StackPanel Grid.Row="2" Spacing="4"><TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" TextWrapping="Wrap" /><StackPanel Orientation="Horizontal" Spacing="8"><Button Content="Refresh" Click="OnRefresh" /><Button Content="Run selected once" Click="OnRun" /></StackPanel></StackPanel>
+        <TextBlock Text="{x:Bind I18n.Text('Scheduled tasks'), Mode=OneWay}" FontSize="30" FontWeight="SemiBold" />
+        <TextBlock Grid.Row="1" Text="{x:Bind I18n.Text(ViewModel.SchedulerStatus), Mode=OneWay}" TextWrapping="Wrap" />
+        <StackPanel Grid.Row="2" Spacing="4"><TextBlock Text="{x:Bind I18n.Text(ViewModel.StatusMessage), Mode=OneWay}" TextWrapping="Wrap" /><StackPanel Orientation="Horizontal" Spacing="8"><Button Content="{x:Bind I18n.Text('Refresh'), Mode=OneWay}" Click="OnRefresh" /><Button Content="{x:Bind I18n.Text('Run selected once'), Mode=OneWay}" Click="OnRun" /></StackPanel></StackPanel>
         <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.Tasks, Mode=OneWay}" SelectionChanged="OnSelected"><ListView.ItemTemplate><DataTemplate x:DataType="models:ScheduledTaskRow"><StackPanel Orientation="Horizontal" Spacing="12"><TextBlock Text="{x:Bind Name}" /><TextBlock Text="{x:Bind Id}" /><TextBlock Text="{x:Bind Detail}" /></StackPanel></DataTemplate></ListView.ItemTemplate></ListView>
         <TextBlock Grid.Row="4" Text="{x:Bind ViewModel.PendingId, Mode=OneWay}" TextWrapping="Wrap" />
-        <StackPanel Grid.Row="5" Orientation="Horizontal" Spacing="8"><Button Content="Query pending request" Click="OnQuery" /><Button Content="I verified the previous outcome" Click="OnAcknowledge" /></StackPanel>
+        <StackPanel Grid.Row="5" Orientation="Horizontal" Spacing="8"><Button Content="{x:Bind I18n.Text('Query pending request'), Mode=OneWay}" Click="OnQuery" /><Button Content="{x:Bind I18n.Text('I verified the previous outcome'), Mode=OneWay}" Click="OnAcknowledge" /></StackPanel>
         <ListView Grid.Row="6" ItemsSource="{x:Bind ViewModel.Runs, Mode=OneWay}"><ListView.ItemTemplate><DataTemplate x:DataType="models:TaskRunRow"><StackPanel Orientation="Horizontal" Spacing="12"><TextBlock Text="{x:Bind Task}" /><TextBlock Text="{x:Bind Status}" /><TextBlock Text="{x:Bind Detail}" /><TextBlock Text="{x:Bind Id}" /></StackPanel></DataTemplate></ListView.ItemTemplate></ListView>
-        <TextBox Grid.Row="7" Header="Pending request details" Text="{x:Bind ViewModel.RunDetails, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" Height="100" />
+        <TextBox Grid.Row="7" Header="{x:Bind I18n.Text('Pending request details'), Mode=OneWay}" Text="{x:Bind ViewModel.RunDetails, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" Height="100" />
     </Grid>
 </Page>

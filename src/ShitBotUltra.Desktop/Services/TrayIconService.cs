@@ -186,8 +186,8 @@ public sealed class TrayIconService : IDisposable
 
         try
         {
-            AppendMenu(menu, MfString, IdOpen, "Open ShitBotUltra Desktop");
-            AppendMenu(menu, MfString, IdExit, "Exit");
+            AppendMenu(menu, MfString, IdOpen, LocalizationService.Current.Text("Open ShitBotUltra Desktop"));
+            AppendMenu(menu, MfString, IdExit, LocalizationService.Current.Text("Exit"));
             GetCursorPos(out var point);
             SetForegroundWindow(_windowHandle);
             var selected = TrackPopupMenu(

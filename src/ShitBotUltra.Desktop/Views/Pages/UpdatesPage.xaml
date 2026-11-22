@@ -4,15 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     IsEnabled="{x:Bind ViewModel.CanEdit, Mode=OneWay}">
     <ScrollViewer><StackPanel Margin="28" Spacing="12">
-        <TextBlock Text="Updates and about" FontSize="30" FontWeight="SemiBold" />
-        <TextBlock Text="{x:Bind ViewModel.DesktopVersion}" />
-        <TextBlock Text="ShitBot-Team and contributors · AGPL-3.0-only" />
-        <TextBlock Text="The controls below manage the connected Core host through its own updater. They do not replace this Desktop installation." TextWrapping="Wrap" />
-        <TextBlock Text="{x:Bind ViewModel.Message, Mode=OneWay}" TextWrapping="Wrap" />
-        <TextBlock Text="{x:Bind ViewModel.HostStatus, Mode=OneWay}" TextWrapping="Wrap" />
-        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="Refresh status" Command="{x:Bind ViewModel.RefreshCommand}" /><Button Content="Check host updates" Click="OnCheck" /><Button Content="Install through host" Click="OnInstall" /></StackPanel>
-        <TextBlock Text="{x:Bind ViewModel.ReleaseDetails, Mode=OneWay}" TextWrapping="Wrap" />
-        <TextBox Header="Release notes" Text="{x:Bind ViewModel.ReleaseNotes, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" Height="300" />
-        <TextBlock Text="The host verifies the asset and decides how to install or roll back. Refresh or reconnect to confirm the final version." TextWrapping="Wrap" />
+        <TextBlock Text="{x:Bind I18n.Text('Updates and about'), Mode=OneWay}" FontSize="30" FontWeight="SemiBold" />
+        <TextBlock Text="{x:Bind I18n.Text(ViewModel.DesktopVersion), Mode=OneWay}" />
+        <TextBlock Text="{x:Bind I18n.Text('ShitBot-Team and contributors · AGPL-3.0-only'), Mode=OneWay}" />
+        <TextBlock Text="{x:Bind I18n.Text('The controls below manage the connected Core host through its own updater. They do not replace this Desktop installation.'), Mode=OneWay}" TextWrapping="Wrap" />
+        <TextBlock Text="{x:Bind I18n.Text(ViewModel.Message), Mode=OneWay}" TextWrapping="Wrap" />
+        <TextBlock Text="{x:Bind I18n.Text(ViewModel.HostStatus), Mode=OneWay}" TextWrapping="Wrap" />
+        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="{x:Bind I18n.Text('Refresh status'), Mode=OneWay}" Command="{x:Bind ViewModel.RefreshCommand}" /><Button Content="{x:Bind I18n.Text('Check host updates'), Mode=OneWay}" Click="OnCheck" /><Button Content="{x:Bind I18n.Text('Install through host'), Mode=OneWay}" Click="OnInstall" /></StackPanel>
+        <TextBlock Text="{x:Bind I18n.Text(ViewModel.ReleaseDetails), Mode=OneWay}" TextWrapping="Wrap" />
+        <TextBox Header="{x:Bind I18n.Text('Release notes'), Mode=OneWay}" Text="{x:Bind ViewModel.ReleaseNotes, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" Height="300" />
+        <TextBlock Text="{x:Bind I18n.Text('The host verifies the asset and decides how to install or roll back. Refresh or reconnect to confirm the final version.'), Mode=OneWay}" TextWrapping="Wrap" />
     </StackPanel></ScrollViewer>
 </Page>

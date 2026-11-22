@@ -6,36 +6,36 @@
     IsEnabled="{x:Bind ViewModel.CanEdit, Mode=OneWay}">
     <ScrollViewer>
         <StackPanel Margin="28" Spacing="12">
-            <TextBlock Text="Plugins" FontSize="30" FontWeight="SemiBold" />
-            <TextBlock Text="Import trusted local ZIP packages, inspect declarations, and grant only the capabilities and scopes you intend to allow." TextWrapping="Wrap" />
-            <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" TextWrapping="Wrap" />
+            <TextBlock Text="{x:Bind I18n.Text('Plugins'), Mode=OneWay}" FontSize="30" FontWeight="SemiBold" />
+            <TextBlock Text="{x:Bind I18n.Text('Import trusted local ZIP packages, inspect declarations, and grant only the capabilities and scopes you intend to allow.'), Mode=OneWay}" TextWrapping="Wrap" />
+            <TextBlock Text="{x:Bind I18n.Text(ViewModel.StatusMessage), Mode=OneWay}" TextWrapping="Wrap" />
             <StackPanel Orientation="Horizontal" Spacing="8">
-                <Button Content="Refresh list" Command="{x:Bind ViewModel.RefreshCommand}" />
-                <Button Content="Import ZIP" Click="OnImport" />
-                <Button Content="Load selected" Click="OnOpen" />
+                <Button Content="{x:Bind I18n.Text('Refresh list'), Mode=OneWay}" Command="{x:Bind ViewModel.RefreshCommand}" />
+                <Button Content="{x:Bind I18n.Text('Import ZIP'), Mode=OneWay}" Click="OnImport" />
+                <Button Content="{x:Bind I18n.Text('Load selected'), Mode=OneWay}" Click="OnOpen" />
             </StackPanel>
             <ListView ItemsSource="{x:Bind ViewModel.Plugins, Mode=OneWay}" MaxHeight="180" SelectionChanged="OnSelectionChanged">
                 <ListView.ItemTemplate><DataTemplate x:DataType="models:PluginRow">
                     <StackPanel Orientation="Horizontal" Spacing="20"><TextBlock Text="{x:Bind Id}" /><TextBlock Text="{x:Bind State}" /></StackPanel>
                 </DataTemplate></ListView.ItemTemplate>
             </ListView>
-            <TextBlock Text="Loaded plugin" FontWeight="SemiBold" />
+            <TextBlock Text="{x:Bind I18n.Text('Loaded plugin'), Mode=OneWay}" FontWeight="SemiBold" />
             <TextBlock Text="{x:Bind ViewModel.CurrentId, Mode=OneWay}" />
-            <TextBlock Text="Manifest, versions and status" />
+            <TextBlock Text="{x:Bind I18n.Text('Manifest, versions and status'), Mode=OneWay}" />
             <TextBox Text="{x:Bind ViewModel.Metadata, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" Height="160" />
-            <ComboBox Header="Package revision" ItemsSource="{x:Bind ViewModel.Versions, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.VersionRevision, Mode=TwoWay}" HorizontalAlignment="Stretch" />
-            <TextBox Header="Configuration JSON" Text="{x:Bind ViewModel.Configuration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="120" />
-            <TextBox Header="Granted capabilities and scopes JSON" Text="{x:Bind ViewModel.Grant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="120" />
+            <ComboBox Header="{x:Bind I18n.Text('Package revision'), Mode=OneWay}" ItemsSource="{x:Bind ViewModel.Versions, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.VersionRevision, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+            <TextBox Header="{x:Bind I18n.Text('Configuration JSON'), Mode=OneWay}" Text="{x:Bind ViewModel.Configuration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="120" />
+            <TextBox Header="{x:Bind I18n.Text('Granted capabilities and scopes JSON'), Mode=OneWay}" Text="{x:Bind ViewModel.Grant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="120" />
             <StackPanel Orientation="Horizontal" Spacing="8">
-                <Button Content="Enable with these grants" Click="OnEnable" />
-                <Button Content="Disable" Click="OnDisable" />
-                <Button Content="Remove package" Click="OnRemove" />
+                <Button Content="{x:Bind I18n.Text('Enable with these grants'), Mode=OneWay}" Click="OnEnable" />
+                <Button Content="{x:Bind I18n.Text('Disable'), Mode=OneWay}" Click="OnDisable" />
+                <Button Content="{x:Bind I18n.Text('Remove package'), Mode=OneWay}" Click="OnRemove" />
             </StackPanel>
-            <TextBlock Text="Plugin provider" FontSize="20" FontWeight="SemiBold" />
-            <TextBox Header="Provider name" Text="{x:Bind ViewModel.ProviderName, Mode=TwoWay}" />
-            <TextBox Header="Request JSON" Text="{x:Bind ViewModel.ProviderRequest, Mode=TwoWay}" AcceptsReturn="True" Height="90" />
-            <Button Content="Call provider" Click="OnProvider" />
-            <TextBox Header="Response" Text="{x:Bind ViewModel.ProviderResult, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" Height="120" />
+            <TextBlock Text="{x:Bind I18n.Text('Plugin provider'), Mode=OneWay}" FontSize="20" FontWeight="SemiBold" />
+            <TextBox Header="{x:Bind I18n.Text('Provider name'), Mode=OneWay}" Text="{x:Bind ViewModel.ProviderName, Mode=TwoWay}" />
+            <TextBox Header="{x:Bind I18n.Text('Request JSON'), Mode=OneWay}" Text="{x:Bind ViewModel.ProviderRequest, Mode=TwoWay}" AcceptsReturn="True" Height="90" />
+            <Button Content="{x:Bind I18n.Text('Call provider'), Mode=OneWay}" Click="OnProvider" />
+            <TextBox Header="{x:Bind I18n.Text('Response'), Mode=OneWay}" Text="{x:Bind ViewModel.ProviderResult, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" Height="120" />
         </StackPanel>
     </ScrollViewer>
 </Page>

@@ -7,19 +7,19 @@
         <StackPanel Margin="28" Spacing="20">
             <StackPanel Spacing="4">
                 <TextBlock Text="ShitBotUltra" FontSize="30" FontWeight="SemiBold" />
-                <TextBlock Text="Native desktop host" FontSize="14" Opacity="0.7" />
+                <TextBlock Text="{x:Bind I18n.Text('Native desktop host'), Mode=OneWay}" FontSize="14" Opacity="0.7" />
             </StackPanel>
 
             <Border Padding="18" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                 <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
-                    <TextBlock Text="Core connection" FontSize="18" FontWeight="SemiBold" />
-                    <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.ConnectionState, Mode=OneWay}" VerticalAlignment="Center" />
-                    <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                    <TextBlock Text="{x:Bind I18n.Text('Core connection'), Mode=OneWay}" FontSize="18" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="{x:Bind I18n.Text(ViewModel.ConnectionState), Mode=OneWay}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind I18n.Text(ViewModel.ErrorMessage), Mode=OneWay}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" TextWrapping="Wrap" Margin="0,8,0,0" />
                     <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="0,16,0,0">
-                        <Button Content="Start / Attach" Command="{x:Bind ViewModel.StartCoreCommand}" />
-                        <Button Content="Refresh" Command="{x:Bind ViewModel.RefreshCommand}" />
-                        <Button Content="Stop managed Core" Command="{x:Bind ViewModel.StopCoreCommand}" IsEnabled="{x:Bind ViewModel.IsManagedProcess, Mode=OneWay}" />
-                        <Button Content="Force Stop" Click="OnForceStopClicked" IsEnabled="{x:Bind ViewModel.IsManagedProcess, Mode=OneWay}" />
+                        <Button Content="{x:Bind I18n.Text('Start / Attach'), Mode=OneWay}" Command="{x:Bind ViewModel.StartCoreCommand}" />
+                        <Button Content="{x:Bind I18n.Text('Refresh'), Mode=OneWay}" Command="{x:Bind ViewModel.RefreshCommand}" />
+                        <Button Content="{x:Bind I18n.Text('Stop managed Core'), Mode=OneWay}" Command="{x:Bind ViewModel.StopCoreCommand}" IsEnabled="{x:Bind ViewModel.IsManagedProcess, Mode=OneWay}" />
+                        <Button Content="{x:Bind I18n.Text('Force Stop'), Mode=OneWay}" Click="OnForceStopClicked" IsEnabled="{x:Bind ViewModel.IsManagedProcess, Mode=OneWay}" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -27,38 +27,38 @@
             <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
                 <Border Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                     <StackPanel Spacing="6">
-                        <TextBlock Text="Core version" Opacity="0.7" />
+                        <TextBlock Text="{x:Bind I18n.Text('Core version'), Mode=OneWay}" Opacity="0.7" />
                         <TextBlock Text="{x:Bind ViewModel.VersionText, Mode=OneWay}" FontSize="22" FontWeight="SemiBold" />
-                        <TextBlock Text="{x:Bind ViewModel.CoreStateText, Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind I18n.Text(ViewModel.CoreStateText), Mode=OneWay}" />
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="1" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                     <StackPanel Spacing="6">
-                        <TextBlock Text="Players" Opacity="0.7" />
-                        <TextBlock Text="{x:Bind ViewModel.PlayerSummary, Mode=OneWay}" FontSize="18" FontWeight="SemiBold" />
-                        <TextBlock Text="Active network summary" />
+                        <TextBlock Text="{x:Bind I18n.Text('Players'), Mode=OneWay}" Opacity="0.7" />
+                        <TextBlock Text="{x:Bind I18n.Text(ViewModel.PlayerSummary), Mode=OneWay}" FontSize="18" FontWeight="SemiBold" />
+                        <TextBlock Text="{x:Bind I18n.Text('Active network summary'), Mode=OneWay}" />
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="2" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                     <StackPanel Spacing="6">
-                        <TextBlock Text="Connections" Opacity="0.7" />
-                        <TextBlock Text="{x:Bind ViewModel.NodeSummary, Mode=OneWay}" FontWeight="SemiBold" />
-                        <TextBlock Text="{x:Bind ViewModel.AdapterSummary, Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind I18n.Text('Connections'), Mode=OneWay}" Opacity="0.7" />
+                        <TextBlock Text="{x:Bind I18n.Text(ViewModel.NodeSummary), Mode=OneWay}" FontWeight="SemiBold" />
+                        <TextBlock Text="{x:Bind I18n.Text(ViewModel.AdapterSummary), Mode=OneWay}" />
                     </StackPanel>
                 </Border>
             </Grid>
 
             <Border Padding="18" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="WebUI" FontSize="18" FontWeight="SemiBold" />
-                    <ToggleSwitch Header="Enable WebUI for this Core session" IsOn="{x:Bind ViewModel.WebUiEnabled, Mode=OneWay}" Toggled="OnWebUiToggled" />
-                    <Button Content="Open WebUI" Command="{x:Bind ViewModel.OpenWebUiCommand}" IsEnabled="{x:Bind ViewModel.WebUiEnabled, Mode=OneWay}" HorizontalAlignment="Left" />
-                    <TextBlock Text="{x:Bind ViewModel.WebUiMessage, Mode=OneWay}" TextWrapping="Wrap" />
-                    <TextBlock Text="Runtime details" FontSize="18" FontWeight="SemiBold" />
-                    <TextBlock Text="{x:Bind ViewModel.InstanceIdText, Mode=OneWay}" />
-                    <TextBlock Text="{x:Bind ViewModel.ManagementUrlText, Mode=OneWay}" />
-                    <TextBlock Text="{x:Bind ViewModel.EventStreamState, Mode=OneWay}" />
-                    <TextBlock Text="Desktop only stops a Core process it started itself. Closing this window leaves the Core process running." TextWrapping="Wrap" Opacity="0.7" />
+                    <TextBlock Text="{x:Bind I18n.Text('WebUI'), Mode=OneWay}" FontSize="18" FontWeight="SemiBold" />
+                    <ToggleSwitch Header="{x:Bind I18n.Text('Enable WebUI for this Core session'), Mode=OneWay}" IsOn="{x:Bind ViewModel.WebUiEnabled, Mode=OneWay}" Toggled="OnWebUiToggled" />
+                    <Button Content="{x:Bind I18n.Text('Open WebUI'), Mode=OneWay}" Command="{x:Bind ViewModel.OpenWebUiCommand}" IsEnabled="{x:Bind ViewModel.WebUiEnabled, Mode=OneWay}" HorizontalAlignment="Left" />
+                    <TextBlock Text="{x:Bind I18n.Text(ViewModel.WebUiMessage), Mode=OneWay}" TextWrapping="Wrap" />
+                    <TextBlock Text="{x:Bind I18n.Text('Runtime details'), Mode=OneWay}" FontSize="18" FontWeight="SemiBold" />
+                    <TextBlock Text="{x:Bind I18n.Text(ViewModel.InstanceIdText), Mode=OneWay}" />
+                    <TextBlock Text="{x:Bind I18n.Text(ViewModel.ManagementUrlText), Mode=OneWay}" />
+                    <TextBlock Text="{x:Bind I18n.Text(ViewModel.EventStreamState), Mode=OneWay}" />
+                    <TextBlock Text="{x:Bind I18n.Text('Desktop only stops a Core process it started itself. Closing this window leaves the Core process running.'), Mode=OneWay}" TextWrapping="Wrap" Opacity="0.7" />
                 </StackPanel>
             </Border>
         </StackPanel>

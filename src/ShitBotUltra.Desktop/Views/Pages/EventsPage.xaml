@@ -5,12 +5,12 @@
     xmlns:models="using:shitbotteam.ultra.desktop.Models">
     <Grid Margin="28" RowDefinitions="Auto,Auto,*" RowSpacing="12">
         <StackPanel Spacing="4">
-            <TextBlock Text="Core events" FontSize="30" FontWeight="SemiBold" />
-            <TextBlock Text="Authenticated server-sent events. Reconnects resume from the last event ID." Opacity="0.7" />
+            <TextBlock Text="{x:Bind I18n.Text('Core events'), Mode=OneWay}" FontSize="30" FontWeight="SemiBold" />
+            <TextBlock Text="{x:Bind I18n.Text('Authenticated server-sent events. Reconnects resume from the last event ID.'), Mode=OneWay}" Opacity="0.7" />
         </StackPanel>
         <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
-            <TextBlock Text="{x:Bind ViewModel.StreamState, Mode=OneWay}" VerticalAlignment="Center" />
-            <Button Grid.Column="1" Content="Clear" Command="{x:Bind ViewModel.ClearCommand}" />
+            <TextBlock Text="{x:Bind I18n.Text(ViewModel.StreamState), Mode=OneWay}" VerticalAlignment="Center" />
+            <Button Grid.Column="1" Content="{x:Bind I18n.Text('Clear'), Mode=OneWay}" Command="{x:Bind ViewModel.ClearCommand}" />
         </Grid>
         <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.Events, Mode=OneWay}">
             <ListView.ItemTemplate>

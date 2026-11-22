@@ -5,19 +5,19 @@
     xmlns:models="using:shitbotteam.ultra.desktop.Services">
     <Grid Margin="28" RowDefinitions="Auto,Auto,*,Auto" RowSpacing="12">
         <StackPanel Spacing="4">
-            <TextBlock Text="Activity logs" FontSize="30" FontWeight="SemiBold" />
-            <TextBlock Text="Desktop lifecycle and Core management-event summaries. Chat bodies and credentials are not stored." Opacity="0.7" TextWrapping="Wrap" />
+            <TextBlock Text="{x:Bind I18n.Text('Activity logs'), Mode=OneWay}" FontSize="30" FontWeight="SemiBold" />
+            <TextBlock Text="{x:Bind I18n.Text('Desktop lifecycle and Core management-event summaries. Chat bodies and credentials are not stored.'), Mode=OneWay}" Opacity="0.7" TextWrapping="Wrap" />
         </StackPanel>
         <Grid Grid.Row="1" ColumnDefinitions="*,180,Auto,Auto" ColumnSpacing="8">
-            <TextBox Text="{x:Bind ViewModel.FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Filter source or message" />
-            <ComboBox Grid.Column="1" SelectedValue="{x:Bind ViewModel.SelectedLevel, Mode=TwoWay}" SelectedValuePath="Content">
-                <ComboBoxItem Content="All" />
-                <ComboBoxItem Content="Information" />
-                <ComboBoxItem Content="Warning" />
-                <ComboBoxItem Content="Error" />
+            <TextBox Text="{x:Bind ViewModel.FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="{x:Bind I18n.Text('Filter source or message'), Mode=OneWay}" />
+            <ComboBox Grid.Column="1" SelectedValue="{x:Bind ViewModel.SelectedLevel, Mode=TwoWay}" SelectedValuePath="Tag">
+                <ComboBoxItem Tag="All" Content="{x:Bind I18n.Text('All'), Mode=OneWay}" />
+                <ComboBoxItem Tag="Information" Content="{x:Bind I18n.Text('Information'), Mode=OneWay}" />
+                <ComboBoxItem Tag="Warning" Content="{x:Bind I18n.Text('Warning'), Mode=OneWay}" />
+                <ComboBoxItem Tag="Error" Content="{x:Bind I18n.Text('Error'), Mode=OneWay}" />
             </ComboBox>
-            <Button Grid.Column="2" Content="Open log folder" Command="{x:Bind ViewModel.OpenLogDirectoryCommand}" />
-            <Button Grid.Column="3" Content="Clear view" Command="{x:Bind ViewModel.ClearViewCommand}" />
+            <Button Grid.Column="2" Content="{x:Bind I18n.Text('Open log folder'), Mode=OneWay}" Command="{x:Bind ViewModel.OpenLogDirectoryCommand}" />
+            <Button Grid.Column="3" Content="{x:Bind I18n.Text('Clear view'), Mode=OneWay}" Command="{x:Bind ViewModel.ClearViewCommand}" />
         </Grid>
         <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.FilteredEntries}" SelectionMode="None">
             <ListView.ItemTemplate>
@@ -31,6 +31,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <TextBlock Grid.Row="3" Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" Opacity="0.7" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="3" Text="{x:Bind I18n.Text(ViewModel.StatusMessage), Mode=OneWay}" Opacity="0.7" TextWrapping="Wrap" />
     </Grid>
 </Page>

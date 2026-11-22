@@ -6,6 +6,7 @@ namespace shitbotteam.ultra.desktop.Views.Pages;
 
 public sealed partial class SectionsPage : Page
 {
+    public shitbotteam.ultra.desktop.Services.LocalizationService I18n => shitbotteam.ultra.desktop.Services.LocalizationService.Current;
     public SectionsViewModel ViewModel { get; }
     public SectionsPage(SectionsViewModel viewModel)
     {
@@ -16,8 +17,8 @@ public sealed partial class SectionsPage : Page
     {
         if (ViewModel.IsDirty)
         {
-            var dialog = new ContentDialog { Title = "Discard section draft?", Content = "Reloading replaces the unsaved section and binding form edits.",
-                PrimaryButtonText = "Discard and reload", CloseButtonText = "Keep draft", DefaultButton = ContentDialogButton.Close, XamlRoot = XamlRoot };
+            var dialog = new ContentDialog { Title = I18n.Text("Discard section draft?"), Content = I18n.Text("Reloading replaces the unsaved section and binding form edits."),
+                PrimaryButtonText = I18n.Text("Discard and reload"), CloseButtonText = I18n.Text("Keep draft"), DefaultButton = ContentDialogButton.Close, XamlRoot = XamlRoot };
             if (await dialog.ShowAsync() != ContentDialogResult.Primary) return;
         }
         await ViewModel.LoadAsync();

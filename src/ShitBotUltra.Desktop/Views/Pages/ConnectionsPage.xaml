@@ -5,10 +5,10 @@
     xmlns:models="using:shitbotteam.ultra.desktop.Models">
     <Grid Margin="28" RowDefinitions="Auto,Auto,*" RowSpacing="12">
         <StackPanel Spacing="4">
-            <TextBlock Text="Connections" FontSize="30" FontWeight="SemiBold" />
-            <TextBlock Text="Live node and adapter state reported by Core." Opacity="0.7" />
+            <TextBlock Text="{x:Bind I18n.Text('Connections'), Mode=OneWay}" FontSize="30" FontWeight="SemiBold" />
+            <TextBlock Text="{x:Bind I18n.Text('Live node and adapter state reported by Core.'), Mode=OneWay}" Opacity="0.7" />
         </StackPanel>
-        <TextBlock Grid.Row="1" Text="{x:Bind ViewModel.ConnectionState, Mode=OneWay}" />
+        <TextBlock Grid.Row="1" Text="{x:Bind I18n.Text(ViewModel.ConnectionState), Mode=OneWay}" />
         <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.ConnectionRows, Mode=OneWay}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:ConnectionRow">

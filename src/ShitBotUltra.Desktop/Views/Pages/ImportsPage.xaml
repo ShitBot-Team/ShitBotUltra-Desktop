@@ -5,25 +5,25 @@
     xmlns:models="using:shitbotteam.ultra.desktop.ViewModels"
     IsEnabled="{x:Bind ViewModel.CanEdit, Mode=OneWay}">
     <Grid Margin="28" RowDefinitions="Auto,Auto,Auto,*,Auto,Auto,*,Auto" RowSpacing="8">
-        <TextBlock Text="Whitelist import" FontSize="30" FontWeight="SemiBold" />
-        <TextBlock Grid.Row="1" Text="Upload consistent ShitBot schema 7 SQLite copies. Select one to eight sources and preview conflicts before committing." TextWrapping="Wrap" />
+        <TextBlock Text="{x:Bind I18n.Text('Whitelist import'), Mode=OneWay}" FontSize="30" FontWeight="SemiBold" />
+        <TextBlock Grid.Row="1" Text="{x:Bind I18n.Text('Upload consistent ShitBot schema 7 SQLite copies. Select one to eight sources and preview conflicts before committing.'), Mode=OneWay}" TextWrapping="Wrap" />
         <StackPanel Grid.Row="2" Spacing="4">
-            <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" TextWrapping="Wrap" />
-            <TextBlock Text="{x:Bind ViewModel.NetworksText, Mode=OneWay}" TextWrapping="Wrap" />
-            <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="Load sources" Click="OnRefresh" /><Button Content="Upload SQLite" Click="OnUpload" /><Button Content="Delete selected copy" Click="OnDelete" /><Button Content="Generate preview" Click="OnPreview" /><Button Content="Clear exclusions" Click="OnClearExclusions" /></StackPanel>
+            <TextBlock Text="{x:Bind I18n.Text(ViewModel.StatusMessage), Mode=OneWay}" TextWrapping="Wrap" />
+            <TextBlock Text="{x:Bind I18n.Text(ViewModel.NetworksText), Mode=OneWay}" TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="{x:Bind I18n.Text('Load sources'), Mode=OneWay}" Click="OnRefresh" /><Button Content="{x:Bind I18n.Text('Upload SQLite'), Mode=OneWay}" Click="OnUpload" /><Button Content="{x:Bind I18n.Text('Delete selected copy'), Mode=OneWay}" Click="OnDelete" /><Button Content="{x:Bind I18n.Text('Generate preview'), Mode=OneWay}" Click="OnPreview" /><Button Content="{x:Bind I18n.Text('Clear exclusions'), Mode=OneWay}" Click="OnClearExclusions" /></StackPanel>
         </StackPanel>
         <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.Sources, Mode=OneWay}" SelectionChanged="OnSourceSelected">
             <ListView.ItemTemplate><DataTemplate x:DataType="models:ImportSourceRow">
-                <StackPanel Orientation="Horizontal" Spacing="12"><CheckBox Content="Include" IsChecked="{x:Bind Selected, Mode=TwoWay}" /><TextBlock Text="{x:Bind Description}" VerticalAlignment="Center" /><TextBox Header="Target network ID" Text="{x:Bind NetworkId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="150" /></StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12"><CheckBox Content="{x:Bind IncludeLabel, Mode=OneWay}" IsChecked="{x:Bind Selected, Mode=TwoWay}" /><TextBlock Text="{x:Bind Description}" VerticalAlignment="Center" /><TextBox Header="{x:Bind TargetNetworkLabel, Mode=OneWay}" Text="{x:Bind NetworkId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinWidth="150" /></StackPanel>
             </DataTemplate></ListView.ItemTemplate>
         </ListView>
-        <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="8"><TextBox Header="Report ID" Text="{x:Bind ViewModel.ReportIdInput, Mode=TwoWay}" Width="300" /><Button Content="Read report" Click="OnRead" VerticalAlignment="Bottom" /><Button Content="Commit preview" Click="OnCommit" VerticalAlignment="Bottom" /><Button Content="Restore import" Click="OnRestore" VerticalAlignment="Bottom" /></StackPanel>
-        <TextBlock Grid.Row="5" Text="{x:Bind ViewModel.ReportSummary, Mode=OneWay}" TextWrapping="Wrap" MaxHeight="100" />
+        <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="8"><TextBox Header="{x:Bind I18n.Text('Report ID'), Mode=OneWay}" Text="{x:Bind ViewModel.ReportIdInput, Mode=TwoWay}" Width="300" /><Button Content="{x:Bind I18n.Text('Read report'), Mode=OneWay}" Click="OnRead" VerticalAlignment="Bottom" /><Button Content="{x:Bind I18n.Text('Commit preview'), Mode=OneWay}" Click="OnCommit" VerticalAlignment="Bottom" /><Button Content="{x:Bind I18n.Text('Restore import'), Mode=OneWay}" Click="OnRestore" VerticalAlignment="Bottom" /></StackPanel>
+        <TextBlock Grid.Row="5" Text="{x:Bind I18n.Text(ViewModel.ReportSummary), Mode=OneWay}" TextWrapping="Wrap" MaxHeight="100" />
         <ListView Grid.Row="6" ItemsSource="{x:Bind ViewModel.Rows, Mode=OneWay}">
             <ListView.ItemTemplate><DataTemplate x:DataType="models:ImportReportRow">
-                <StackPanel Orientation="Horizontal" Spacing="12"><CheckBox Content="Exclude" IsChecked="{x:Bind Excluded, Mode=TwoWay}" /><TextBlock Text="{x:Bind Player}" /><TextBlock Text="{x:Bind State}" /><TextBlock Text="{x:Bind Reason}" TextWrapping="Wrap" /><TextBlock Text="{x:Bind Details}" TextWrapping="Wrap" /></StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12"><CheckBox Content="{x:Bind ExcludeLabel, Mode=OneWay}" IsChecked="{x:Bind Excluded, Mode=TwoWay}" /><TextBlock Text="{x:Bind Player}" /><TextBlock Text="{x:Bind State}" /><TextBlock Text="{x:Bind Reason}" TextWrapping="Wrap" /><TextBlock Text="{x:Bind Details}" TextWrapping="Wrap" /></StackPanel>
             </DataTemplate></ListView.ItemTemplate>
         </ListView>
-        <StackPanel Grid.Row="7" Orientation="Horizontal" Spacing="8"><Button Content="Previous" Click="OnPrevious" /><Button Content="Next" Click="OnNext" /><TextBlock Text="{x:Bind ViewModel.PageText, Mode=OneWay}" VerticalAlignment="Center" /></StackPanel>
+        <StackPanel Grid.Row="7" Orientation="Horizontal" Spacing="8"><Button Content="{x:Bind I18n.Text('Previous'), Mode=OneWay}" Click="OnPrevious" /><Button Content="{x:Bind I18n.Text('Next'), Mode=OneWay}" Click="OnNext" /><TextBlock Text="{x:Bind I18n.Text(ViewModel.PageText), Mode=OneWay}" VerticalAlignment="Center" /></StackPanel>
     </Grid>
 </Page>

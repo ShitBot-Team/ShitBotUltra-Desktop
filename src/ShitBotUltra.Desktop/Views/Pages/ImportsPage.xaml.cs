@@ -7,14 +7,15 @@ namespace shitbotteam.ultra.desktop.Views.Pages;
 
 public sealed partial class ImportsPage : Page
 {
+    public shitbotteam.ultra.desktop.Services.LocalizationService I18n => shitbotteam.ultra.desktop.Services.LocalizationService.Current;
     public ImportsViewModel ViewModel { get; }
     public ImportsPage(ImportsViewModel viewModel) { InitializeComponent(); ViewModel = viewModel; }
     private void OnSourceSelected(object sender, SelectionChangedEventArgs e)
     { if (((ListView)sender).SelectedItem is ImportSourceRow source) ViewModel.SelectedSourceId = source.Id; }
     private async Task<bool> Confirm(string title, string content, string action)
     {
-        var dialog = new ContentDialog { Title = title, Content = content, PrimaryButtonText = action,
-            CloseButtonText = "Cancel", DefaultButton = ContentDialogButton.Close, XamlRoot = XamlRoot };
+        var dialog = new ContentDialog { Title = I18n.Text(title), Content = I18n.Text(content), PrimaryButtonText = I18n.Text(action),
+            CloseButtonText = I18n.Text("Cancel"), DefaultButton = ContentDialogButton.Close, XamlRoot = XamlRoot };
         return await dialog.ShowAsync() == ContentDialogResult.Primary;
     }
     private async void OnRefresh(object sender, RoutedEventArgs e)

@@ -5,30 +5,30 @@
     xmlns:models="using:shitbotteam.ultra.desktop.ViewModels"
     IsEnabled="{x:Bind ViewModel.CanEdit, Mode=OneWay}">
     <ScrollViewer><StackPanel Margin="28" Spacing="12">
-        <TextBlock Text="Templates" FontSize="30" FontWeight="SemiBold" />
-        <TextBlock Text="Import, edit and preview templates through Core. Publishing is a separate action." TextWrapping="Wrap" />
-        <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" TextWrapping="Wrap" />
-        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="Refresh list" Command="{x:Bind ViewModel.RefreshCommand}" /><Button Content="Import ZIP" Click="OnImport" /><Button Content="Load selected" Click="OnOpen" /></StackPanel>
+        <TextBlock Text="{x:Bind I18n.Text('Templates'), Mode=OneWay}" FontSize="30" FontWeight="SemiBold" />
+        <TextBlock Text="{x:Bind I18n.Text('Import, edit and preview templates through Core. Publishing is a separate action.'), Mode=OneWay}" TextWrapping="Wrap" />
+        <TextBlock Text="{x:Bind I18n.Text(ViewModel.StatusMessage), Mode=OneWay}" TextWrapping="Wrap" />
+        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="{x:Bind I18n.Text('Refresh list'), Mode=OneWay}" Command="{x:Bind ViewModel.RefreshCommand}" /><Button Content="{x:Bind I18n.Text('Import ZIP'), Mode=OneWay}" Click="OnImport" /><Button Content="{x:Bind I18n.Text('Load selected'), Mode=OneWay}" Click="OnOpen" /></StackPanel>
         <ListView ItemsSource="{x:Bind ViewModel.Templates, Mode=OneWay}" MaxHeight="150" SelectionChanged="OnSelectionChanged"><ListView.ItemTemplate><DataTemplate x:DataType="models:TemplateRow"><StackPanel Orientation="Horizontal" Spacing="20"><TextBlock Text="{x:Bind Id}" /><TextBlock Text="{x:Bind Published}" /></StackPanel></DataTemplate></ListView.ItemTemplate></ListView>
         <TextBlock Text="{x:Bind ViewModel.CurrentId, Mode=OneWay}" FontWeight="SemiBold" />
-        <TextBox Header="Versions, metadata and attribution" Text="{x:Bind ViewModel.Metadata, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" Height="150" />
-        <ComboBox Header="Content version" ItemsSource="{x:Bind ViewModel.Versions, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.VersionRevision, Mode=TwoWay}" HorizontalAlignment="Stretch" />
-        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="Load version files" Click="OnLoadFiles" /><Button Content="Publish version" Click="OnPublish" /><Button Content="Restore built-in" Click="OnRestore" /></StackPanel>
+        <TextBox Header="{x:Bind I18n.Text('Versions, metadata and attribution'), Mode=OneWay}" Text="{x:Bind ViewModel.Metadata, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" Height="150" />
+        <ComboBox Header="{x:Bind I18n.Text('Content version'), Mode=OneWay}" ItemsSource="{x:Bind ViewModel.Versions, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.VersionRevision, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="{x:Bind I18n.Text('Load version files'), Mode=OneWay}" Click="OnLoadFiles" /><Button Content="{x:Bind I18n.Text('Publish version'), Mode=OneWay}" Click="OnPublish" /><Button Content="{x:Bind I18n.Text('Restore built-in'), Mode=OneWay}" Click="OnRestore" /></StackPanel>
         <ListView ItemsSource="{x:Bind ViewModel.Files, Mode=OneWay}" MaxHeight="150" SelectionChanged="OnFileSelected" />
-        <TextBox Header="File path (select a file above or enter a new path)" Text="{x:Bind ViewModel.FilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Header="File text" Text="{x:Bind ViewModel.FileText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" FontFamily="Consolas" Height="180" />
-        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="Read file" Click="OnOpenFile" /><Button Content="Save new draft" Click="OnSaveFile" /><Button Content="Delete from new draft" Click="OnDeleteFile" /></StackPanel>
-        <TextBlock Text="Default style" FontSize="20" FontWeight="SemiBold" />
-        <TextBox Header="Theme JSON" Text="{x:Bind ViewModel.Theme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="90" />
-        <TextBox Header="CSS" Text="{x:Bind ViewModel.Css, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="90" />
-        <TextBox Header="Locale" Text="{x:Bind ViewModel.Locale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <Button Content="Save defaults" Click="OnDefaults" />
-        <TextBlock Text="Render preview" FontSize="20" FontWeight="SemiBold" />
-        <TextBox Header="Provider name" Text="{x:Bind ViewModel.ProviderName, Mode=TwoWay}" />
-        <TextBox Header="Provider request JSON" Text="{x:Bind ViewModel.ProviderRequest, Mode=TwoWay}" AcceptsReturn="True" Height="90" />
-        <Button Content="Load provider data" Click="OnProvider" />
-        <TextBox Header="Preview data JSON" Text="{x:Bind ViewModel.RenderData, Mode=TwoWay}" AcceptsReturn="True" Height="110" />
-        <Button Content="Render preview" Click="OnRender" />
+        <TextBox Header="{x:Bind I18n.Text('File path (select a file above or enter a new path)'), Mode=OneWay}" Text="{x:Bind ViewModel.FilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Header="{x:Bind I18n.Text('File text'), Mode=OneWay}" Text="{x:Bind ViewModel.FileText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" FontFamily="Consolas" Height="180" />
+        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="{x:Bind I18n.Text('Read file'), Mode=OneWay}" Click="OnOpenFile" /><Button Content="{x:Bind I18n.Text('Save new draft'), Mode=OneWay}" Click="OnSaveFile" /><Button Content="{x:Bind I18n.Text('Delete from new draft'), Mode=OneWay}" Click="OnDeleteFile" /></StackPanel>
+        <TextBlock Text="{x:Bind I18n.Text('Default style'), Mode=OneWay}" FontSize="20" FontWeight="SemiBold" />
+        <TextBox Header="{x:Bind I18n.Text('Theme JSON'), Mode=OneWay}" Text="{x:Bind ViewModel.Theme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="90" />
+        <TextBox Header="{x:Bind I18n.Text('CSS'), Mode=OneWay}" Text="{x:Bind ViewModel.Css, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="90" />
+        <TextBox Header="{x:Bind I18n.Text('Locale'), Mode=OneWay}" Text="{x:Bind ViewModel.Locale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <Button Content="{x:Bind I18n.Text('Save defaults'), Mode=OneWay}" Click="OnDefaults" />
+        <TextBlock Text="{x:Bind I18n.Text('Render preview'), Mode=OneWay}" FontSize="20" FontWeight="SemiBold" />
+        <TextBox Header="{x:Bind I18n.Text('Provider name'), Mode=OneWay}" Text="{x:Bind ViewModel.ProviderName, Mode=TwoWay}" />
+        <TextBox Header="{x:Bind I18n.Text('Provider request JSON'), Mode=OneWay}" Text="{x:Bind ViewModel.ProviderRequest, Mode=TwoWay}" AcceptsReturn="True" Height="90" />
+        <Button Content="{x:Bind I18n.Text('Load provider data'), Mode=OneWay}" Click="OnProvider" />
+        <TextBox Header="{x:Bind I18n.Text('Preview data JSON'), Mode=OneWay}" Text="{x:Bind ViewModel.RenderData, Mode=TwoWay}" AcceptsReturn="True" Height="110" />
+        <Button Content="{x:Bind I18n.Text('Render preview'), Mode=OneWay}" Click="OnRender" />
         <Image x:Name="PreviewImage" Stretch="Uniform" MaxHeight="600" HorizontalAlignment="Left" />
     </StackPanel></ScrollViewer>
 </Page>

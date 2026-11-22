@@ -5,6 +5,7 @@ namespace shitbotteam.ultra.desktop.Views.Pages;
 
 public sealed partial class EventsPage : Page
 {
+    public shitbotteam.ultra.desktop.Services.LocalizationService I18n => shitbotteam.ultra.desktop.Services.LocalizationService.Current;
     public EventsViewModel ViewModel { get; }
 
     public EventsPage(EventsViewModel viewModel)
