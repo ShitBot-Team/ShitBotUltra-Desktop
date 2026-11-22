@@ -1,0 +1,45 @@
+<Window
+    x:Class="shitbotteam.ultra.desktop.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls">
+    <Grid>
+        <controls:NavigationView
+            x:Name="RootNavigation"
+            IsBackButtonVisible="Collapsed"
+            IsSettingsVisible="False"
+            PaneDisplayMode="LeftCompact"
+            SelectionChanged="OnNavigationSelectionChanged">
+            <controls:NavigationView.MenuItems>
+                <controls:NavigationViewItem x:Name="DashboardItem" Content="Overview" Tag="overview">
+                    <controls:NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Home" />
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Connections" Tag="connections">
+                    <controls:NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="World" />
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Configuration" Tag="configuration">
+                    <controls:NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Setting" />
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Events" Tag="events">
+                    <controls:NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="List" />
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+            </controls:NavigationView.MenuItems>
+            <controls:NavigationView.FooterMenuItems>
+                <controls:NavigationViewItem Content="Settings" Tag="settings">
+                    <controls:NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Setting" />
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+            </controls:NavigationView.FooterMenuItems>
+            <Frame x:Name="ContentFrame" />
+        </controls:NavigationView>
+    </Grid>
+</Window>

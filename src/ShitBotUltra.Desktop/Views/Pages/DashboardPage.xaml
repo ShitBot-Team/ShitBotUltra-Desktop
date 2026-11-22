@@ -1,0 +1,62 @@
+<Page
+    x:Class="shitbotteam.ultra.desktop.Views.Pages.DashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls">
+    <ScrollViewer>
+        <StackPanel Margin="28" Spacing="20">
+            <StackPanel Spacing="4">
+                <TextBlock Text="ShitBotUltra" FontSize="30" FontWeight="SemiBold" />
+                <TextBlock Text="Native desktop host" FontSize="14" Opacity="0.7" />
+            </StackPanel>
+
+            <Border Padding="18" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                    <TextBlock Text="Core connection" FontSize="18" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.ConnectionState, Mode=OneWay}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                    <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="0,16,0,0">
+                        <Button Content="Start / Attach" Command="{x:Bind ViewModel.StartCoreCommand}" />
+                        <Button Content="Refresh" Command="{x:Bind ViewModel.RefreshCommand}" />
+                        <Button Content="Stop managed Core" Command="{x:Bind ViewModel.StopCoreCommand}" IsEnabled="{x:Bind ViewModel.IsManagedProcess, Mode=OneWay}" />
+                        <Button Content="Force Stop" Click="OnForceStopClicked" IsEnabled="{x:Bind ViewModel.IsManagedProcess, Mode=OneWay}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                <Border Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Core version" Opacity="0.7" />
+                        <TextBlock Text="{x:Bind ViewModel.VersionText, Mode=OneWay}" FontSize="22" FontWeight="SemiBold" />
+                        <TextBlock Text="{x:Bind ViewModel.CoreStateText, Mode=OneWay}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Players" Opacity="0.7" />
+                        <TextBlock Text="{x:Bind ViewModel.PlayerSummary, Mode=OneWay}" FontSize="18" FontWeight="SemiBold" />
+                        <TextBlock Text="Active network summary" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Padding="16" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Connections" Opacity="0.7" />
+                        <TextBlock Text="{x:Bind ViewModel.NodeSummary, Mode=OneWay}" FontWeight="SemiBold" />
+                        <TextBlock Text="{x:Bind ViewModel.AdapterSummary, Mode=OneWay}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Padding="18" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Runtime details" FontSize="18" FontWeight="SemiBold" />
+                    <TextBlock Text="{x:Bind ViewModel.InstanceIdText, Mode=OneWay}" />
+                    <TextBlock Text="{x:Bind ViewModel.ManagementUrlText, Mode=OneWay}" />
+                    <TextBlock Text="{x:Bind ViewModel.EventStreamState, Mode=OneWay}" />
+                    <TextBlock Text="Desktop only stops a Core process it started itself. Closing this window leaves the Core process running." TextWrapping="Wrap" Opacity="0.7" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
