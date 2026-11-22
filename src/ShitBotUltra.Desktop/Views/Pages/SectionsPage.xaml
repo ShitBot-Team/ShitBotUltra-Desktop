@@ -1,8 +1,9 @@
 <Page
     x:Class="shitbotteam.ultra.desktop.Views.Pages.SectionsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ScrollViewer><StackPanel Margin="28" Spacing="12" IsEnabled="{x:Bind ViewModel.CanEdit, Mode=OneWay}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    IsEnabled="{x:Bind ViewModel.CanEdit, Mode=OneWay}">
+    <ScrollViewer><StackPanel Margin="28" Spacing="12">
         <TextBlock Text="Configuration sections" FontSize="30" FontWeight="SemiBold" />
         <TextBlock Text="Edit multiple related sections together. Core validates, backs up and saves them as one revision; the YAML source editor remains available separately." TextWrapping="Wrap" />
         <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" TextWrapping="Wrap" />
