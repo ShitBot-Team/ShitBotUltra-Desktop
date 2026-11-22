@@ -140,6 +140,17 @@ public sealed class CoreApiClient
             cancellationToken);
     }
 
+    public async Task SetWebUiEnabledAsync(bool enabled, CancellationToken cancellationToken = default)
+    {
+        using var response = await SendAsync(
+            HttpMethod.Put,
+            "api/v1/webui",
+            new WebUiRequest(enabled),
+            null,
+            cancellationToken);
+        await EnsureSuccessAsync(response, cancellationToken);
+    }
+
     public async Task<ConfigurationSnapshot> GetConfigurationAsync(CancellationToken cancellationToken = default)
     {
         using var response = await SendAsync(HttpMethod.Get, "api/v1/config", null, null, cancellationToken);
@@ -349,4 +360,7 @@ public sealed class CoreApiClient
 
     private sealed record ConfigurationTextRequest(
         [property: JsonPropertyName("text")] string Text);
+
+    private sealed record WebUiRequest(
+        [property: JsonPropertyName("enabled")] bool Enabled);
 }

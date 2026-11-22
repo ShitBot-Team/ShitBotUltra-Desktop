@@ -32,10 +32,21 @@ public sealed class DesktopSettingsStore
                 bufferSize: 4096,
                 useAsync: true);
 
-            return await JsonSerializer.DeserializeAsync<DesktopSettings>(
+            var settings = await JsonSerializer.DeserializeAsync<DesktopSettings>(
                 stream,
                 JsonOptions,
                 cancellationToken) ?? new DesktopSettings();
+
+            return settings with
+            {
+                CoreEndpoint = string.IsNullOrWhiteSpace(settings.CoreEndpoint)
+                    ? new DesktopSettings().CoreEndpoint
+                    : settings.CoreEndpoint,
+                CliExecutablePath = string.IsNullOrWhiteSpace(settings.CliExecutablePath)
+                    ? new DesktopSettings().CliExecutablePath
+                    : settings.CliExecutablePath,
+                CliArguments = settings.CliArguments ?? string.Empty
+            };
         }
         catch (JsonException exception)
         {

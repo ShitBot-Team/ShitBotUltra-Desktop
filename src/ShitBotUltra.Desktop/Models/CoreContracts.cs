@@ -102,6 +102,8 @@ public sealed record CoreConnectionsSnapshot
     public List<JsonElement> Adapters { get; init; } = [];
 }
 
+
+
 public sealed record CoreConfigurationDocument
 {
     [JsonPropertyName("text")]

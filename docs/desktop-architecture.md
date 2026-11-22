@@ -36,6 +36,7 @@ The initial shell uses these management routes:
 - `GET /api/v1/dashboard` (optional on older Core builds)
 - `GET /api/v1/connections`
 - `GET /api/v1/config` and `PUT /api/v1/config` with the returned ETag in `If-Match`
+- `PUT /api/v1/webui` to toggle the current session's WebUI without changing the persisted default
 - `GET /api/v1/events` as an authenticated SSE stream with `Last-Event-ID` reconnect support
 
 Core validates and persists configuration, creates backups and reports whether a restart is required. Desktop keeps the user's draft on a revision conflict and does not write Core files directly.
@@ -46,10 +47,11 @@ Core validates and persists configuration, creates backups and reports whether a
 - Desktop starts only a local `sbu.exe`. The argument string is explicitly configured in Settings and passed directly to the executable without a shell; Desktop does not invent or hardcode a CLI command contract.
 - A graceful stop is sent only to the process started by this Desktop session. The attached instance is never stopped.
 - Force Stop is a separate, explicit process-tree termination action.
+- An optional `StartCoreOnLaunch` preference starts or attaches during Desktop startup.
 - Closing the Desktop window disconnects its event stream and releases its process handle; it deliberately leaves a managed Core process running.
 
 The Core configuration directory follows Go's documented user configuration directory and is displayed as `%APPDATA%/ShitBotUltra` on Windows. Desktop does not accept a custom config directory until the CLI exposes a documented matching option; this avoids displaying a setting that the host would silently ignore.
 
 ## Current delivery boundary
 
-The first implementation slice includes the app shell, dashboard, connection summary, configuration source editor, event stream, local preferences, Core attachment and owned-process lifecycle. Tray integration, offline configuration locking, log-file capture, update installation, plugin/template management and import workflows remain separate follow-up slices. No tests, build, publish or runtime checks were run.
+The first implementation slices include the app shell, dashboard, connection summary, configuration source editor, event stream, local preferences, Core attachment and owned-process lifecycle, optional Core startup on Desktop launch, configurable CLI arguments and current-session WebUI control. Tray integration, offline configuration locking, log-file capture, update installation, plugin/template management and import workflows remain separate follow-up slices. No tests, build, publish or runtime checks were run.

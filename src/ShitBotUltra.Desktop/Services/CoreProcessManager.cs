@@ -60,6 +60,17 @@ public sealed class CoreProcessManager : IDisposable
                 throw new InvalidOperationException("Desktop can only start a local HTTP Core host. Remote or local HTTPS instances must be started by their own host.");
             }
 
+            if (string.IsNullOrWhiteSpace(executablePath))
+            {
+                throw new ArgumentException("A CLI executable path is required.", nameof(executablePath));
+            }
+
+            arguments ??= string.Empty;
+            if (arguments.Length > 2048 || arguments.Contains('\0'))
+            {
+                throw new ArgumentException("CLI arguments must be 2048 characters or fewer and cannot contain NUL.", nameof(arguments));
+            }
+
             var fullPath = Path.GetFullPath(executablePath);
             if (!File.Exists(fullPath))
             {

@@ -14,6 +14,16 @@ public sealed partial class DashboardPage : Page
         ViewModel = viewModel;
     }
 
+    private async void OnWebUiToggled(object sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleSwitch toggle && toggle.IsOn != ViewModel.WebUiEnabled)
+        {
+            toggle.IsOn = ViewModel.WebUiEnabled;
+            await ViewModel.ToggleWebUiCommand.ExecuteAsync(null);
+            toggle.IsOn = ViewModel.WebUiEnabled;
+        }
+    }
+
     private async void OnForceStopClicked(object sender, RoutedEventArgs e)
     {
         var dialog = new ContentDialog

@@ -7,6 +7,8 @@ public sealed record DesktopSettings
     public string CliExecutablePath { get; init; } = Path.Combine(AppContext.BaseDirectory, "sbu.exe");
 
     public string CliArguments { get; init; } = string.Empty;
+
+    public bool StartCoreOnLaunch { get; init; }
 }
 
 public static class CorePaths

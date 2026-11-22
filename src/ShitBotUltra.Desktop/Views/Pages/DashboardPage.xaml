@@ -50,6 +50,10 @@
 
             <Border Padding="18" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                 <StackPanel Spacing="8">
+                    <TextBlock Text="WebUI" FontSize="18" FontWeight="SemiBold" />
+                    <ToggleSwitch Header="Enable WebUI for this Core session" IsOn="{x:Bind ViewModel.WebUiEnabled, Mode=OneWay}" Toggled="OnWebUiToggled" />
+                    <Button Content="Open WebUI" Command="{x:Bind ViewModel.OpenWebUiCommand}" IsEnabled="{x:Bind ViewModel.WebUiEnabled, Mode=OneWay}" HorizontalAlignment="Left" />
+                    <TextBlock Text="{x:Bind ViewModel.WebUiMessage, Mode=OneWay}" TextWrapping="Wrap" />
                     <TextBlock Text="Runtime details" FontSize="18" FontWeight="SemiBold" />
                     <TextBlock Text="{x:Bind ViewModel.InstanceIdText, Mode=OneWay}" />
                     <TextBlock Text="{x:Bind ViewModel.ManagementUrlText, Mode=OneWay}" />

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using shitbotteam.ultra.desktop.Models;
@@ -41,6 +42,15 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
 
     [ObservableProperty]
     private bool isManagedProcess;
+
+    [ObservableProperty]
+    private bool webUiEnabled;
+
+    [ObservableProperty]
+    private bool isWebUiBusy;
+
+    [ObservableProperty]
+    private string webUiMessage = string.Empty;
 
     public ObservableCollection<ConnectionRow> ConnectionRows { get; } = [];
 
@@ -93,6 +103,11 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
             ConnectionState = reachable
                 ? "Core is reachable. Connect with an admin token in Settings."
                 : "Core is not running at the configured address.";
+
+            if (settings.StartCoreOnLaunch)
+            {
+                await StartCoreAsync();
+            }
         }
         catch (Exception exception)
         {
@@ -125,6 +140,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
             Dashboard = await _apiClient.GetDashboardAsync(cancellationToken);
             var connections = await _apiClient.GetConnectionsAsync(cancellationToken);
             ReplaceConnections(connections);
+            WebUiEnabled = coreStatus.WebUiEnabled;
             await _eventStream.StartAsync();
             ConnectionState = $"Connected to Core {coreStatus.Version}";
         }
@@ -133,6 +149,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
             _apiClient.ClearCredentials();
             Status = null;
             Dashboard = null;
+            WebUiEnabled = false;
             ConnectionRows.Clear();
             ConnectionState = "Connection failed";
             ErrorMessage = exception.Message;
@@ -250,6 +267,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
             IsManagedProcess = false;
             Status = null;
             Dashboard = null;
+            WebUiEnabled = false;
             ConnectionRows.Clear();
             ConnectionState = "Managed Core stopped.";
             await _eventStream.StopAsync();
@@ -280,11 +298,72 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
         IsManagedProcess = false;
         Status = null;
         Dashboard = null;
+        WebUiEnabled = false;
         ConnectionRows.Clear();
         ConnectionState = "Managed Core was force-stopped.";
         await _eventStream.StopAsync();
     }
 
+
+
+    [RelayCommand]
+    private async Task ToggleWebUiAsync()
+    {
+        if (!_apiClient.IsAuthenticated || IsWebUiBusy)
+        {
+            return;
+        }
+
+        IsWebUiBusy = true;
+        WebUiMessage = string.Empty;
+        try
+        {
+            var requestedState = !WebUiEnabled;
+            await _apiClient.SetWebUiEnabledAsync(requestedState);
+            WebUiEnabled = requestedState;
+            WebUiMessage = requestedState
+                ? "WebUI is enabled for this Core session."
+                : "WebUI is disabled for this Core session. The management API remains available.";
+        }
+        catch (Exception exception)
+        {
+            WebUiMessage = exception.Message;
+        }
+        finally
+        {
+            IsWebUiBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private void OpenWebUi()
+    {
+        if (!WebUiEnabled)
+        {
+            WebUiMessage = "Enable WebUI before opening it.";
+            return;
+        }
+
+        var endpoint = _apiClient.ConfiguredEndpoint;
+        if (endpoint is null)
+        {
+            WebUiMessage = "Connect to Core before opening WebUI.";
+            return;
+        }
+
+        try
+        {
+            using var process = Process.Start(new ProcessStartInfo
+            {
+                FileName = endpoint.AbsoluteUri,
+                UseShellExecute = true
+            });
+        }
+        catch (Exception exception)
+        {
+            WebUiMessage = exception.Message;
+        }
+    }
 
     private async Task RefreshCoreAsync()
     {
@@ -293,6 +372,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
         Status = coreStatus;
         Dashboard = await _apiClient.GetDashboardAsync();
         ReplaceConnections(await _apiClient.GetConnectionsAsync());
+        WebUiEnabled = coreStatus.WebUiEnabled;
         ConnectionState = $"Connected to Core {coreStatus.Version}";
     }
 
@@ -332,7 +412,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
     {
         _dispatcher.Enqueue(() =>
         {
-            if (value.Type == "reset")
+            if (value.Type is "reset" or "webui.changed")
             {
                 _ = RefreshAsync();
             }
