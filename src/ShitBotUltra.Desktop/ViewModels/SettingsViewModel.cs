@@ -15,6 +15,7 @@ public partial class SettingsViewModel : ObservableObject
     private string _savedCliArguments = DesktopSettings.DefaultCliArguments;
     private bool _savedStartCoreOnLaunch;
     private bool _savedMinimizeToTrayOnClose;
+    private string _savedLanguage = "system";
 
     [ObservableProperty]
     private string endpoint = "http://127.0.0.1:17880/";
@@ -30,6 +31,9 @@ public partial class SettingsViewModel : ObservableObject
 
     [ObservableProperty]
     private bool minimizeToTrayOnClose;
+
+    [ObservableProperty]
+    private string language = "system";
 
     [ObservableProperty]
     private string tokenInput = string.Empty;
@@ -50,7 +54,8 @@ public partial class SettingsViewModel : ObservableObject
             || !string.Equals(CliExecutablePath, _savedCliExecutablePath, StringComparison.Ordinal)
             || !string.Equals(CliArguments, _savedCliArguments, StringComparison.Ordinal)
             || StartCoreOnLaunch != _savedStartCoreOnLaunch
-            || MinimizeToTrayOnClose != _savedMinimizeToTrayOnClose);
+            || MinimizeToTrayOnClose != _savedMinimizeToTrayOnClose
+            || !string.Equals(Language, _savedLanguage, StringComparison.Ordinal));
 
     public event Action<DesktopSettings>? SettingsApplied;
 
@@ -69,6 +74,12 @@ public partial class SettingsViewModel : ObservableObject
     partial void OnStartCoreOnLaunchChanged(bool value) => OnPropertyChanged(nameof(IsDirty));
 
     partial void OnMinimizeToTrayOnCloseChanged(bool value) => OnPropertyChanged(nameof(IsDirty));
+
+    partial void OnLanguageChanged(string value)
+    {
+        LocalizationService.Current.SetPreference(value);
+        OnPropertyChanged(nameof(IsDirty));
+    }
 
     partial void OnHasLoadedChanged(bool value) => OnPropertyChanged(nameof(IsDirty));
 
@@ -215,7 +226,8 @@ public partial class SettingsViewModel : ObservableObject
                 ? DesktopSettings.DefaultCliArguments
                 : CliArguments.Trim(),
             StartCoreOnLaunch = StartCoreOnLaunch,
-            MinimizeToTrayOnClose = MinimizeToTrayOnClose
+            MinimizeToTrayOnClose = MinimizeToTrayOnClose,
+            Language = LocalizationService.NormalizePreference(Language)
         };
     }
 
@@ -226,11 +238,14 @@ public partial class SettingsViewModel : ObservableObject
         CliArguments = settings.CliArguments;
         StartCoreOnLaunch = settings.StartCoreOnLaunch;
         MinimizeToTrayOnClose = settings.MinimizeToTrayOnClose;
+        Language = LocalizationService.NormalizePreference(settings.Language);
+        LocalizationService.Current.SetPreference(Language);
         _savedEndpoint = Endpoint;
         _savedCliExecutablePath = CliExecutablePath;
         _savedCliArguments = CliArguments;
         _savedStartCoreOnLaunch = StartCoreOnLaunch;
         _savedMinimizeToTrayOnClose = MinimizeToTrayOnClose;
+        _savedLanguage = Language;
         HasLoaded = true;
         OnPropertyChanged(nameof(IsDirty));
         SettingsApplied?.Invoke(settings);

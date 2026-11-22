@@ -11,54 +11,54 @@
             PaneDisplayMode="LeftCompact"
             SelectionChanged="OnNavigationSelectionChanged">
             <controls:NavigationView.MenuItems>
-                <controls:NavigationViewItem x:Name="DashboardItem" Content="Overview" Tag="overview">
+                <controls:NavigationViewItem x:Name="DashboardItem" Content="{x:Bind I18n.Text('Overview'), Mode=OneWay}" Tag="overview">
                     <controls:NavigationViewItem.Icon>
                         <SymbolIcon Symbol="Home" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItem Content="Connections" Tag="connections">
+                <controls:NavigationViewItem Content="{x:Bind I18n.Text('Connections'), Mode=OneWay}" Tag="connections">
                     <controls:NavigationViewItem.Icon>
                         <SymbolIcon Symbol="World" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItem Content="Configuration sections" Tag="sections">
+                <controls:NavigationViewItem Content="{x:Bind I18n.Text('Configuration sections'), Mode=OneWay}" Tag="sections">
                     <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Setting" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItem Content="Configuration" Tag="configuration">
+                <controls:NavigationViewItem Content="{x:Bind I18n.Text('Configuration'), Mode=OneWay}" Tag="configuration">
                     <controls:NavigationViewItem.Icon>
                         <SymbolIcon Symbol="Setting" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItem Content="Tasks" Tag="tasks">
+                <controls:NavigationViewItem Content="{x:Bind I18n.Text('Tasks'), Mode=OneWay}" Tag="tasks">
                     <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Clock" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItem Content="Whitelist import" Tag="imports">
+                <controls:NavigationViewItem Content="{x:Bind I18n.Text('Whitelist import'), Mode=OneWay}" Tag="imports">
                     <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Import" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItem Content="Templates" Tag="templates">
+                <controls:NavigationViewItem Content="{x:Bind I18n.Text('Templates'), Mode=OneWay}" Tag="templates">
                     <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Pictures" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItem Content="Plugins" Tag="plugins">
+                <controls:NavigationViewItem Content="{x:Bind I18n.Text('Plugins'), Mode=OneWay}" Tag="plugins">
                     <controls:NavigationViewItem.Icon>
                         <SymbolIcon Symbol="Manage" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItem Content="Events" Tag="events">
+                <controls:NavigationViewItem Content="{x:Bind I18n.Text('Events'), Mode=OneWay}" Tag="events">
                     <controls:NavigationViewItem.Icon>
                         <SymbolIcon Symbol="List" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItem Content="Activity logs" Tag="logs">
+                <controls:NavigationViewItem Content="{x:Bind I18n.Text('Activity logs'), Mode=OneWay}" Tag="logs">
                     <controls:NavigationViewItem.Icon>
                         <SymbolIcon Symbol="Document" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
             </controls:NavigationView.MenuItems>
             <controls:NavigationView.FooterMenuItems>
-                <controls:NavigationViewItem Content="Updates" Tag="updates">
+                <controls:NavigationViewItem Content="{x:Bind I18n.Text('Updates'), Mode=OneWay}" Tag="updates">
                     <controls:NavigationViewItem.Icon><SymbolIcon Symbol="Refresh" /></controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItem Content="Settings" Tag="settings">
+                <controls:NavigationViewItem Content="{x:Bind I18n.Text('Settings'), Mode=OneWay}" Tag="settings">
                     <controls:NavigationViewItem.Icon>
                         <SymbolIcon Symbol="Setting" />
                     </controls:NavigationViewItem.Icon>

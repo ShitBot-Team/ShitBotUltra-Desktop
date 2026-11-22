@@ -17,6 +17,8 @@ public sealed partial class MainWindow : Window
     private readonly CoreLogService _logService;
     private TrayIconService? _trayIcon;
 
+    public LocalizationService I18n => LocalizationService.Current;
+
     public MainWindow(IServiceProvider services)
     {
         InitializeComponent();
@@ -47,8 +49,8 @@ public sealed partial class MainWindow : Window
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
-        await _viewModel.InitializeAsync();
         await _settingsViewModel.LoadAsync();
+        await _viewModel.InitializeAsync();
     }
 
     private void OnNavigationSelectionChanged(

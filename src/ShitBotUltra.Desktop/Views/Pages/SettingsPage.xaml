@@ -5,41 +5,48 @@
     <ScrollViewer>
         <StackPanel Margin="28" Spacing="16" MaxWidth="820" HorizontalAlignment="Left">
             <StackPanel Spacing="4">
-                <TextBlock Text="Settings" FontSize="30" FontWeight="SemiBold" />
-                <TextBlock Text="Connection details and local host paths. Admin credentials are kept in memory only." Opacity="0.7" TextWrapping="Wrap" />
+                <TextBlock Text="{x:Bind I18n.Text('Settings'), Mode=OneWay}" FontSize="30" FontWeight="SemiBold" />
+                <TextBlock Text="{x:Bind I18n.Text('Connection details and local host paths. Admin credentials are kept in memory only.'), Mode=OneWay}" Opacity="0.7" TextWrapping="Wrap" />
             </StackPanel>
 
+            <ComboBox Header="{x:Bind I18n.Text('Language'), Mode=OneWay}"
+                      SelectedValue="{x:Bind ViewModel.Language, Mode=TwoWay}" SelectedValuePath="Tag">
+                <ComboBoxItem Tag="system" Content="{x:Bind I18n.Text('Follow Windows'), Mode=OneWay}" />
+                <ComboBoxItem Tag="zh-CN" Content="简体中文" />
+                <ComboBoxItem Tag="en-US" Content="English" />
+            </ComboBox>
+
             <StackPanel Spacing="6">
-                <TextBlock Text="Core management URL" FontWeight="SemiBold" />
+                <TextBlock Text="{x:Bind I18n.Text('Core management URL'), Mode=OneWay}" FontWeight="SemiBold" />
                 <TextBox Text="{x:Bind ViewModel.Endpoint, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="http://127.0.0.1:17880/" />
             </StackPanel>
             <StackPanel Spacing="6">
-                <TextBlock Text="CLI executable" FontWeight="SemiBold" />
-                <TextBox Text="{x:Bind ViewModel.CliExecutablePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Path to sbu.exe" />
+                <TextBlock Text="{x:Bind I18n.Text('CLI executable'), Mode=OneWay}" FontWeight="SemiBold" />
+                <TextBox Text="{x:Bind ViewModel.CliExecutablePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="{x:Bind I18n.Text('Path to sbu.exe'), Mode=OneWay}" />
             </StackPanel>
             <StackPanel Spacing="6">
-                <TextBlock Text="CLI arguments" FontWeight="SemiBold" />
+                <TextBlock Text="{x:Bind I18n.Text('CLI arguments'), Mode=OneWay}" FontWeight="SemiBold" />
                 <TextBox Text="{x:Bind ViewModel.CliArguments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="serve --no-webui" />
-                <TextBlock Text="Desktop passes this argument string directly to sbu.exe without a shell. Default: serve --no-webui. Override only when using a CLI version with a different documented command." Opacity="0.7" TextWrapping="Wrap" />
+                <TextBlock Text="{x:Bind I18n.Text('Desktop passes this argument string directly to sbu.exe without a shell. Default: serve --no-webui. Override only when using a CLI version with a different documented command.'), Mode=OneWay}" Opacity="0.7" TextWrapping="Wrap" />
             </StackPanel>
             <StackPanel Spacing="6">
-                <TextBlock Text="Core configuration directory" FontWeight="SemiBold" />
+                <TextBlock Text="{x:Bind I18n.Text('Core configuration directory'), Mode=OneWay}" FontWeight="SemiBold" />
                 <TextBlock Text="{x:Bind ViewModel.ConfigDirectory, Mode=OneWay}" TextWrapping="Wrap" />
-                <TextBlock Text="The Core owns its database and runtime files. Desktop uses the documented default user configuration directory." Opacity="0.7" TextWrapping="Wrap" />
-                <Button Content="Open configuration directory" Command="{x:Bind ViewModel.OpenConfigDirectoryCommand}" HorizontalAlignment="Left" />
+                <TextBlock Text="{x:Bind I18n.Text('The Core owns its database and runtime files. Desktop uses the documented default user configuration directory.'), Mode=OneWay}" Opacity="0.7" TextWrapping="Wrap" />
+                <Button Content="{x:Bind I18n.Text('Open configuration directory'), Mode=OneWay}" Command="{x:Bind ViewModel.OpenConfigDirectoryCommand}" HorizontalAlignment="Left" />
             </StackPanel>
             <StackPanel Spacing="6">
-                <TextBlock Text="Admin token" FontWeight="SemiBold" />
-                <PasswordBox x:Name="AdminTokenBox" PasswordChanged="OnPasswordChanged" PlaceholderText="Blank: read local token only for loopback" />
+                <TextBlock Text="{x:Bind I18n.Text('Admin token'), Mode=OneWay}" FontWeight="SemiBold" />
+                <PasswordBox x:Name="AdminTokenBox" PasswordChanged="OnPasswordChanged" PlaceholderText="{x:Bind I18n.Text('Blank: read local token only for loopback'), Mode=OneWay}" />
             </StackPanel>
-            <ToggleSwitch Header="Start or attach to Core when Desktop opens" IsOn="{x:Bind ViewModel.StartCoreOnLaunch, Mode=TwoWay}" />
-            <ToggleSwitch Header="Minimize to the system tray when closing the window" IsOn="{x:Bind ViewModel.MinimizeToTrayOnClose, Mode=TwoWay}" />
+            <ToggleSwitch Header="{x:Bind I18n.Text('Start or attach to Core when Desktop opens'), Mode=OneWay}" IsOn="{x:Bind ViewModel.StartCoreOnLaunch, Mode=TwoWay}" />
+            <ToggleSwitch Header="{x:Bind I18n.Text('Minimize to the system tray when closing the window'), Mode=OneWay}" IsOn="{x:Bind ViewModel.MinimizeToTrayOnClose, Mode=TwoWay}" />
             <StackPanel Orientation="Horizontal" Spacing="8">
-                <Button Content="Save preferences" Command="{x:Bind ViewModel.SaveCommand}" />
-                <Button Content="Discard changes and reload" Click="OnReloadDiscardClicked" />
-                <Button Content="Connect" Click="OnConnectClicked" />
+                <Button Content="{x:Bind I18n.Text('Save preferences'), Mode=OneWay}" Command="{x:Bind ViewModel.SaveCommand}" />
+                <Button Content="{x:Bind I18n.Text('Discard changes and reload'), Mode=OneWay}" Click="OnReloadDiscardClicked" />
+                <Button Content="{x:Bind I18n.Text('Connect'), Mode=OneWay}" Click="OnConnectClicked" />
             </StackPanel>
-            <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" TextWrapping="Wrap" />
+            <TextBlock Text="{x:Bind I18n.Text(ViewModel.StatusMessage), Mode=OneWay}" TextWrapping="Wrap" />
         </StackPanel>
     </ScrollViewer>
 </Page>

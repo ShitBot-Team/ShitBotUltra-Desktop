@@ -8,6 +8,8 @@ public sealed partial class SettingsPage : Page
 {
     public SettingsViewModel ViewModel { get; }
 
+    public shitbotteam.ultra.desktop.Services.LocalizationService I18n => shitbotteam.ultra.desktop.Services.LocalizationService.Current;
+
     public SettingsPage(SettingsViewModel viewModel)
     {
         InitializeComponent();
@@ -41,10 +43,10 @@ public sealed partial class SettingsPage : Page
 
         var dialog = new ContentDialog
         {
-            Title = "Discard Desktop preferences?",
-            Content = "The current endpoint or CLI path has not been saved. Reloading replaces these values with the saved preferences.",
-            PrimaryButtonText = "Discard and reload",
-            CloseButtonText = "Keep changes",
+            Title = I18n.Text("Discard Desktop preferences?"),
+            Content = I18n.Text("The current endpoint or CLI path has not been saved. Reloading replaces these values with the saved preferences."),
+            PrimaryButtonText = I18n.Text("Discard and reload"),
+            CloseButtonText = I18n.Text("Keep changes"),
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = XamlRoot
         };

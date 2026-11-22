@@ -13,6 +13,9 @@ public sealed record DesktopSettings
     public bool StartCoreOnLaunch { get; init; }
 
     public bool MinimizeToTrayOnClose { get; init; }
+
+    // Old settings files omit this field and follow the Windows UI language.
+    public string Language { get; init; } = "system";
 }
 
 public static class CorePaths
