@@ -91,7 +91,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
         _logService = logService;
 
         _eventStream.EventReceived += OnEventReceived;
-        _eventStream.StateChanged += OnEventStreamStateChanged;
+        _eventStream.StateChanged += OnEventStreamServiceStateChanged;
         _processManager.ManagedProcessExited += OnManagedProcessExited;
     }
 
@@ -451,7 +451,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
         });
     }
 
-    private void OnEventStreamStateChanged(string value)
+    private void OnEventStreamServiceStateChanged(string value)
     {
         _logService.Info("Event stream", value);
         _dispatcher.Enqueue(() => EventStreamState = value);
@@ -480,7 +480,7 @@ public partial class MainViewModel : ObservableObject, IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         _eventStream.EventReceived -= OnEventReceived;
-        _eventStream.StateChanged -= OnEventStreamStateChanged;
+        _eventStream.StateChanged -= OnEventStreamServiceStateChanged;
         _processManager.ManagedProcessExited -= OnManagedProcessExited;
         await _eventStream.DisposeAsync();
         _processManager.Dispose();
