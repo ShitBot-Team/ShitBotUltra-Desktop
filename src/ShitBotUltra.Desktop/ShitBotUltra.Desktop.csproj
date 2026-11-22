@@ -9,6 +9,10 @@
     <EnableMsixTooling>false</EnableMsixTooling>
     <Platforms>x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <!-- A direct dotnet run/build has no specific platform. Use the current
+         .NET SDK architecture only for supported Windows hosts; an explicit
+         RuntimeIdentifier or x64/ARM64 Platform always takes precedence. -->
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' And ('$(Platform)' == '' Or '$(Platform)' == 'AnyCPU' Or '$(Platform)' == 'Any CPU') And ('$(NETCoreSdkPortableRuntimeIdentifier)' == 'win-x64' Or '$(NETCoreSdkPortableRuntimeIdentifier)' == 'win-arm64')">$(NETCoreSdkPortableRuntimeIdentifier)</RuntimeIdentifier>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RootNamespace>shitbotteam.ultra.desktop</RootNamespace>
     <AssemblyName>ShitBotUltra.Desktop</AssemblyName>
