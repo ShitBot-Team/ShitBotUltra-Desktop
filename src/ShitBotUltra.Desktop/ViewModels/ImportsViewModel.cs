@@ -109,6 +109,7 @@ public partial class ImportsViewModel : ObservableObject
         await _api.ManagementRequestAsync(HttpMethod.Delete, "api/v1/imports/sources/" + CoreApiClient.ManagementSegment(SelectedSourceId), _sourceSession);
         var row = Sources.FirstOrDefault(s => s.Id == SelectedSourceId);
         if (row is not null) Sources.Remove(row);
+        _excluded.RemoveWhere(id => id.StartsWith(SelectedSourceId + ":", StringComparison.Ordinal));
         StatusMessage = "Core's staged copy was removed; the original file was not touched.";
     });
 
@@ -134,6 +135,9 @@ public partial class ImportsViewModel : ObservableObject
         _reportSession = session;
         _previewFingerprint = "";
         _excluded.Clear();
+        foreach (var row in value.GetProperty("rows").EnumerateArray())
+            if (row.GetProperty("status").GetString() == "excluded")
+                _excluded.Add(row.GetProperty("id").GetString() ?? "");
         ApplyReport(value);
         StatusMessage = "Report loaded. Generate a fresh preview to commit an uncommitted report.";
     });

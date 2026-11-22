@@ -7,7 +7,11 @@ namespace shitbotteam.ultra.desktop.Views.Pages;
 public sealed partial class SectionsPage : Page
 {
     public SectionsViewModel ViewModel { get; }
-    public SectionsPage(SectionsViewModel viewModel) { InitializeComponent(); ViewModel = viewModel; }
+    public SectionsPage(SectionsViewModel viewModel)
+    {
+        InitializeComponent(); ViewModel = viewModel;
+        Unloaded += (_, _) => { ViewModel.CreatedSecret = ""; SecretBox.Password = ""; };
+    }
     private async void OnLoad(object sender, RoutedEventArgs e)
     {
         if (ViewModel.IsDirty)
@@ -25,6 +29,7 @@ public sealed partial class SectionsPage : Page
         var value = SecretBox.Password;
         SecretBox.Password = "";
         await ViewModel.CreateSecretAsync(value);
+        if (!IsLoaded) ViewModel.CreatedSecret = "";
     }
     private void OnClearSecret(object sender, RoutedEventArgs e) { ViewModel.CreatedSecret = ""; SecretBox.Password = ""; }
 }
