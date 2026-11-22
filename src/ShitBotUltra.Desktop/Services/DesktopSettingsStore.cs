@@ -70,8 +70,7 @@ public sealed class DesktopSettingsStore
                 FileAccess.Write,
                 FileShare.None,
                 bufferSize: 4096,
-                useAsync: true,
-                options: FileOptions.WriteThrough))
+                options: FileOptions.Asynchronous | FileOptions.WriteThrough))
             {
                 await JsonSerializer.SerializeAsync(stream, settings, JsonOptions, cancellationToken);
                 await stream.FlushAsync(cancellationToken);
